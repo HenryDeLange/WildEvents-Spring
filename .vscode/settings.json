@@ -1,0 +1,18 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "cSpell.words": [
+        "MyWild",
+        "nocrypt",
+        "outform",
+        "pubin",
+        "pubout",
+        "RSASSA",
+        "springframework",
+        "topk",
+        "WildEvents",
+        "iNat",
+        "iNaturalist"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.format.settings.url": ".vscode/java-formatter.xml"
+}

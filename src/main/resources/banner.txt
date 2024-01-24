@@ -1,0 +1,14 @@
+
+o       o   o    o o--o                 o      
+|       | o |    | |                    |      
+o   o   o   |  o-O O-o  o   o o-o o-o  -o- o-o 
+ \ / \ /  | | |  | |     \ /  |-' |  |  |   \  
+  o   o   | o  o-o o--o   o   o-o o  o  o  o-o 
+
+-------------------------------------------------------
+  App Version     : ${application.version}
+  Spring Version  : ${spring-boot.version}
+  Spring Profile  : ${spring.profiles.active}
+  Server Port     : ${server.port}
+  Database        : ${spring.cloud.azure.cosmos.database}
+-------------------------------------------------------

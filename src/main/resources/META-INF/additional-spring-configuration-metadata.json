@@ -1,0 +1,39 @@
+{
+    "properties": [
+        {
+            "name": "mywild.app.version",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.app.version'"
+        },
+        {
+            "name": "mywild.jwt.audience",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.jwt.audience'"
+        },
+        {
+            "name": "mywild.jwt.subject",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.jwt.subject'"
+        },
+        {
+            "name": "mywild.jwt.issuer",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.jwt.issuer'"
+        },
+        {
+            "name": "mywild.key.private",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.key.private'"
+        },
+        {
+            "name": "mywild.key.public",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.key.public'"
+        },
+        {
+            "name": "mywild.cors",
+            "type": "java.lang.String",
+            "description": "A description for 'mywild.cors'"
+        }
+    ]
+}

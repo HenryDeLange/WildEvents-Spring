@@ -1,0 +1,40 @@
+server:
+    port: 8080
+    error:
+        include-message: always
+        include-binding-errors: always
+        include-exception: true
+        # include-stacktrace: always
+
+logging:
+    level:
+        mywild: TRACE
+        # org:
+        #     springframework:
+        #         security: TRACE
+
+mywild:
+    app:
+        version: @project.version@
+    jwt:
+        issuer: MyWild
+        subject: WildEvents
+        audience: ${JWT_AUDIENCE}
+    key:
+        private: ${PRIVATE_KEY}
+        public: ${PUBLIC_KEY}
+    cors: ${CORS}
+
+spring:
+    main:
+        lazy-initialization: true
+    jmx:
+        enabled: false
+    config:
+        import: optional:file:./.env[.properties]
+    cloud:
+        azure:
+            cosmos:
+                key: ${AZURE_COSMOS_KEY}
+                endpoint: ${AZURE_COSMOS_ENDPOINT}
+                database: ${AZURE_COSMOS_DATABASE}
