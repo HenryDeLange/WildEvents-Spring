@@ -21,6 +21,16 @@
             "description": "The JWT token issuer (iss) claim."
         },
         {
+            "name": "mywild.jwt.access-token-duration",
+            "type": "java.lang.Integer",
+            "description": "The number of minutes the JWT access token is valid for."
+        },
+        {
+            "name": "mywild.jwt.refresh-token-duration",
+            "type": "java.lang.Integer",
+            "description": "The number of minutes the JWT refresh token is valid for."
+        },
+        {
             "name": "mywild.key.private",
             "type": "java.lang.String",
             "description": "The private key used by the JWT token."

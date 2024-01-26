@@ -1,17 +1,19 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
+        "geoprivacy",
+        "iNat",
+        "iNaturalist",
         "MyWild",
         "nocrypt",
+        "OpenAPI",
         "outform",
         "pubin",
         "pubout",
         "RSASSA",
         "springframework",
         "topk",
-        "WildEvents",
-        "iNat",
-        "iNaturalist"
+        "WildEvents"
     ],
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.settings.url": ".vscode/java-formatter.xml"

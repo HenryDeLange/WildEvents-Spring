@@ -24,7 +24,7 @@ import mywild.core.data.BaseEntity;
 @AllArgsConstructor
 @Container(containerName = "Activities")
 @CosmosUniqueKeyPolicy(uniqueKeys = {
-    @CosmosUniqueKey(paths = { "/name" })
+    @CosmosUniqueKey(paths = { "/eventId", "/name" })
 })
 public class ActivityEntity extends BaseEntity {
 

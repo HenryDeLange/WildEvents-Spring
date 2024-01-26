@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import com.azure.spring.data.cosmos.core.query.CosmosPageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import mywild.activity.calculate.CalculateService;
 import mywild.core.error.BadRequestException;
 import mywild.core.error.ForbiddenException;
 import mywild.core.error.NotFoundException;
@@ -39,6 +40,9 @@ public class ActivityService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private CalculateService calculateService;
 
     public @Valid Paged<Activity> findActivities(@NotNull String userId, @NotNull String eventId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
@@ -106,6 +110,7 @@ public class ActivityService {
         checkThatEventCanBeModified(validUser, validEvent);
 
         // TODO: Do calculation
+        calculateService.calculateActivity(entity);
         entity.setCalculated(ZonedDateTime.now());
 
         return ActivityMapper.INSTANCE.entityToDto(
@@ -128,7 +133,6 @@ public class ActivityService {
                 && !entity.getAdmins().contains(user.getUsername())
                 && !(canBeParticipant && entity.getParticipants().contains(user.getInaturalist())))
             throw new ForbiddenException("Event not accessible by this User!");
-        
         return entity;
     }
 

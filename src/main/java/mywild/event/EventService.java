@@ -14,6 +14,7 @@ import com.azure.spring.data.cosmos.core.query.CosmosPageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import mywild.activity.ActivityRepository;
+import mywild.activity.calculate.CalculateService;
 import mywild.core.error.BadRequestException;
 import mywild.core.error.ForbiddenException;
 import mywild.core.error.NotFoundException;
@@ -36,6 +37,9 @@ public class EventService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private CalculateService calculateService;
 
     public @Valid Paged<Event> findEvents(@NotNull String userId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
@@ -109,9 +113,17 @@ public class EventService {
         if (!entity.getAdmins().contains(validUser.getUsername()))
             throw new ForbiddenException("Event cannot be calculated by this User!");
         makeSureEventIsNotClosed(entity);
+        // Calculate all associated activities
+        // TODO: Implement the calculation logic
+        activityRepo.findAll(new PartitionKey(id))
+            .forEach(activity -> {
 
-        // TODO: Calculate all associated activities
-        
+                // TODO: Do calculation
+                calculateService.calculateActivity(activity);
+                activity.setCalculated(ZonedDateTime.now());
+                activityRepo.save(activity);
+
+            });
     }
 
     public @Valid Event adminJoinEvent(@NotNull String userId, @NotNull String id, @NotNull String adminUsername) {

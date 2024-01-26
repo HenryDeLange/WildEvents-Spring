@@ -36,9 +36,9 @@ README.html
 .azure
 
 # Project Files
-
+keys
 .env
 *.pem
 *.der
-
 logs
+openapi-inat

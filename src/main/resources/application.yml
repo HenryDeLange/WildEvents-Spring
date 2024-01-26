@@ -26,6 +26,8 @@ mywild:
         issuer: MyWild
         subject: WildEvents
         audience: ${JWT_AUDIENCE}
+        access-token-duration: 60
+        refresh-token-duration: 362
     key:
         private: ${PRIVATE_KEY}
         public: ${PUBLIC_KEY}

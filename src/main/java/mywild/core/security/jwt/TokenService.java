@@ -32,6 +32,12 @@ public class TokenService {
     @Value("${mywild.jwt.audience}")
     private String audience;
 
+    @Value("${mywild.jwt.access-token-duration}")
+    private int accessTokenDuration;
+
+    @Value("${mywild.jwt.refresh-token-duration}")
+    private int refreshTokenDuration;
+
     @Autowired
     private RSAPrivateKey privateKey;
 
@@ -45,8 +51,8 @@ public class TokenService {
                     .audience(audience)
                     .issueTime(new Date())
                     .expirationTime(tokenType == TokenType.ACCESS
-                        ? Date.from(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant()) // Access
-                        : Date.from(LocalDateTime.now().plusHours(2).plusMinutes(20).atZone(ZoneId.systemDefault()).toInstant()) // Refresh
+                        ? Date.from(LocalDateTime.now().plusMinutes(accessTokenDuration).atZone(ZoneId.systemDefault()).toInstant()) // Access
+                        : Date.from(LocalDateTime.now().plusHours(refreshTokenDuration).atZone(ZoneId.systemDefault()).toInstant()) // Refresh
                     )
                     .claim("scope", tokenType.toString().toLowerCase())
                     .claim(TokenConstants.JWT_USER_ID, user.getId())
