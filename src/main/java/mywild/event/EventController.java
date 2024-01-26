@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,11 +21,11 @@ public class EventController {
 
     @Autowired
     private EventService service;
-
+    
     @Operation(summary = "Find all Events associated with the User (admin, participant or public).")
     @GetMapping("/events")
-    public Paged<Event> findEvents(@RequestParam(required = false) Integer page, JwtAuthenticationToken jwtToken) {
-        return service.findEvents(Utils.getUserIdFromJwt(jwtToken), page);
+    public Paged<Event> findEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String requestContinuation, JwtAuthenticationToken jwtToken) {
+        return service.findEvents(Utils.getUserIdFromJwt(jwtToken), page, requestContinuation);
     }
 
     @Operation(summary = "Find an Event associated with the User (admin, participant or public).")

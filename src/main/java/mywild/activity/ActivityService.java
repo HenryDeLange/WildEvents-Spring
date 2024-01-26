@@ -4,8 +4,11 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import com.azure.spring.data.cosmos.core.query.CosmosPageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import mywild.core.error.BadRequestException;
@@ -22,7 +25,8 @@ import mywild.user.UserRepository;
 @Service
 public class ActivityService {
 
-    private static final int PAGE_SIZE = 10;
+    @Value("${mywild.wildevents.page-size}")
+    private int pageSize;
 
     @Value("${mywild.wildevents.max-activities-per-event}")
     private int maxActivitiesPErEvent;
@@ -36,16 +40,16 @@ public class ActivityService {
     @Autowired
     private UserRepository userRepo;
 
-    public @Valid Paged<Activity> findActivities(@NotNull String userId, @NotNull String eventId, Integer page) {
-        if (page == null || page < 0)
-            page = 0;
-        // UserEntity validUser = getValidUser(userId);
-        // Page<ActivityEntity> entities = repo.findAll(new PartitionKey(eventId)
-        // EventVisibilityType.PUBLIC, validUser.getUsername(), validUser.getInaturalist(),
-        // Pageable.ofSize(PAGE_SIZE).withPage(page));
-        // return new Paged<>(page, entities.getTotalElements(),
-        // entities.getContent().stream().map(ActivityMapper.INSTANCE::entityToDto).toList());
-        return null;
+    public @Valid Paged<Activity> findActivities(@NotNull String userId, @NotNull String eventId, int page, String requestContinuation) {
+        UserEntity validUser = getValidUser(userId);
+        EventEntity validEvent = getValidEvent(validUser, eventId, true); // Validate event
+        Page<ActivityEntity> entities = repo.findAllByEventIdOrderByNameAsc(validEvent.getId(),
+            CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
+        return new Paged<>(
+            page, pageSize, entities.getTotalElements(),
+            entities.getContent().stream().map(ActivityMapper.INSTANCE::entityToDto).toList(),
+            entities.isFirst(), entities.isLast(),
+            ((CosmosPageRequest) entities.getPageable()).getRequestContinuation());
     }
 
     public @Valid Activity findActivity(@NotNull String userId, @NotNull String id) {

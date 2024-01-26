@@ -4,11 +4,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import com.azure.cosmos.models.PartitionKey;
+import com.azure.spring.data.cosmos.core.query.CosmosPageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import mywild.activity.ActivityRepository;
@@ -23,7 +25,8 @@ import mywild.user.UserRepository;
 @Service
 public class EventService {
 
-    private static final int PAGE_SIZE = 10;
+    @Value("${mywild.wildevents.page-size}")
+    private int pageSize;
 
     @Autowired
     private EventRepository repo;
@@ -34,15 +37,16 @@ public class EventService {
     @Autowired
     private UserRepository userRepo;
 
-    public @Valid Paged<Event> findEvents(@NotNull String userId, Integer page) {
-        if (page == null || page < 0)
-            page = 0;
+    public @Valid Paged<Event> findEvents(@NotNull String userId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
         Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsIgnoreCaseContainsOrParticipantsIgnoreCaseContainsOrderByStartDescNameAsc(
             EventVisibilityType.PUBLIC, validUser.getUsername(), validUser.getInaturalist(),
-            Pageable.ofSize(PAGE_SIZE).withPage(page));
-        return new Paged<>(page, entities.getTotalElements(),
-            entities.getContent().stream().map(EventMapper.INSTANCE::entityToDto).toList());
+            CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
+        return new Paged<>(
+            page, pageSize, entities.getTotalElements(),
+            entities.getContent().stream().map(EventMapper.INSTANCE::entityToDto).toList(),
+            entities.isFirst(), entities.isLast(),
+            ((CosmosPageRequest) entities.getPageable()).getRequestContinuation());
     }
 
     public @Valid Event findEvent(@NotNull String userId, @NotNull String id) {

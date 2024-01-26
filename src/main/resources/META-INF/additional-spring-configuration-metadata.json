@@ -36,6 +36,11 @@
             "description": "The CORS allowed origins."
         },
         {
+            "name": "mywild.wildevents.page-size",
+            "type": "java.lang.Integer",
+            "description": "How many records to return per page for paginated queries."
+        },
+        {
             "name": "mywild.wildevents.max-activities-per-event",
             "type": "java.lang.Integer",
             "description": "How many Activities can be added to an Event."

@@ -24,8 +24,8 @@ public class ActivityController {
 
     @Operation(summary = "Find all Activities associated with the Event.")
     @GetMapping("/activities")
-    public Paged<Activity> findActivities(@RequestParam String eventId, @RequestParam(required = false) Integer page, JwtAuthenticationToken jwtToken) {
-        return service.findActivities(Utils.getUserIdFromJwt(jwtToken), eventId, page);
+    public Paged<Activity> findActivities(@RequestParam String eventId, @RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String requestContinuation, JwtAuthenticationToken jwtToken) {
+        return service.findActivities(Utils.getUserIdFromJwt(jwtToken), eventId, page, requestContinuation);
     }
 
     @Operation(summary = "Find an Activity associated with the Event.")
