@@ -27,7 +27,7 @@ public class UserController {
 
     @Operation(summary = "Login as an existing User in order to get a pair of access and refresh tokens.")
     @PostMapping("login")
-    public Tokens login(@RequestBody Login login) {
+    public Tokens login(@RequestBody UserLogin login) {
         return service.login(login);
     }
 

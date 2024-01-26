@@ -1,7 +1,7 @@
 package mywild.activity;
 
-import java.util.List;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,15 +15,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityBase {
+public class ActivityCreate extends ActivityBase {
 
     @NotBlank
-    private String name;
+    private String eventId;
 
-    private String description;
-
-    private List<String> criteria;
-
-    private ActivityDisableReason disableReason;
+    @NotNull
+    private ActivityType type;
 
 }

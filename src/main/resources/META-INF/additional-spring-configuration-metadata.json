@@ -3,37 +3,42 @@
         {
             "name": "mywild.app.version",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.app.version'"
+            "description": "The application version."
         },
         {
             "name": "mywild.jwt.audience",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.jwt.audience'"
+            "description": "The JWT token audience (aud) claim."
         },
         {
             "name": "mywild.jwt.subject",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.jwt.subject'"
+            "description": "The JWT token subject (sub) claim."
         },
         {
             "name": "mywild.jwt.issuer",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.jwt.issuer'"
+            "description": "The JWT token issuer (iss) claim."
         },
         {
             "name": "mywild.key.private",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.key.private'"
+            "description": "The private key used by the JWT token."
         },
         {
             "name": "mywild.key.public",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.key.public'"
+            "description": "The public key used by the JWT token."
         },
         {
             "name": "mywild.cors",
             "type": "java.lang.String",
-            "description": "A description for 'mywild.cors'"
+            "description": "The CORS allowed origins."
+        },
+        {
+            "name": "mywild.wildevents.max-activities-per-event",
+            "type": "java.lang.Integer",
+            "description": "How many Activities can be added to an Event."
         }
     ]
 }

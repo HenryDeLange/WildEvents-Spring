@@ -1,6 +1,9 @@
 package mywild.activity;
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +17,15 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Activity extends ActivityBase {
+public class Activity extends ActivityCreate {
 
     @NotBlank
     private String id;
+
+    private ZonedDateTime calculated;
+
+    private List<String> participants;
+
+    private List<Integer> results;
 
 }

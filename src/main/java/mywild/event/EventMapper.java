@@ -14,6 +14,6 @@ public interface EventMapper {
 
     public Event entityToDto(EventEntity entity);
 
-    public Event superToChild(EventBase superDto);
+    public Event baseDtoToFullDto(EventBase superDto);
 
 }

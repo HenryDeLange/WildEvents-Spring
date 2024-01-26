@@ -29,7 +29,7 @@ public class UserService {
     }
 
     // TODO: keep track of login attempts and restrict it to X per hour/day, to prevent brute force attacks
-    public Tokens login(@Valid Login login) {
+    public Tokens login(@Valid UserLogin login) {
         Optional<UserEntity> userEntity = repo.findByUsernameAndPassword(login.getUsername(), login.getPassword());
         if (!userEntity.isPresent())
             throw new ForbiddenException("Incorrect User credentials!");

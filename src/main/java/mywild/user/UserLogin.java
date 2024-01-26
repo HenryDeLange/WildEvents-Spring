@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Login {
+public class UserLogin {
 
     @NotBlank
     @Size(min = 4)
