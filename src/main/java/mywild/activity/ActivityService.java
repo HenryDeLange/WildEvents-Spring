@@ -108,11 +108,7 @@ public class ActivityService {
         ActivityEntity entity = foundEntity.get();
         EventEntity validEvent = getValidEvent(validUser, entity.getEventId(), false);
         checkThatEventCanBeModified(validUser, validEvent);
-
-        // TODO: Do calculation
         calculateService.calculateActivity(entity);
-        entity.setCalculated(ZonedDateTime.now());
-
         return ActivityMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }

@@ -2,6 +2,7 @@ package mywild.activity;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.CosmosUniqueKey;
 import com.azure.spring.data.cosmos.core.mapping.CosmosUniqueKeyPolicy;
@@ -37,17 +38,15 @@ public class ActivityEntity extends BaseEntity {
 
     private String description;
 
-    private List<String> criteria;
-
-    private ActivityDisableReason disableReason;
-
     @NotNull
     private ActivityType type;
 
+    private ActivityDisableReason disableReason;
+
     private ZonedDateTime calculated;
 
-    private List<String> participants;
+    private Map<String, String> criteria;
 
-    private List<Integer> results;
+    private Map<String, ActivityCalculation> results;
 
 }

@@ -41,4 +41,3 @@ keys
 *.pem
 *.der
 logs
-openapi-inat

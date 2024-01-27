@@ -35,6 +35,7 @@ mywild:
     wildevents:
         page-size: 10
         max-activities-per-event: 5
+        max-inat-results-per-activity: 20000
 
 spring:
     main:

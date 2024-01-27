@@ -2,6 +2,7 @@ package mywild.activity;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,8 +25,6 @@ public class Activity extends ActivityCreate {
 
     private ZonedDateTime calculated;
 
-    private List<String> participants;
-
-    private List<Integer> results;
+    private Map<String, ActivityCalculation> results;
 
 }

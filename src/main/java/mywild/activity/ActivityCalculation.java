@@ -1,7 +1,6 @@
 package mywild.activity;
 
-import java.util.Map;
-import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,15 +14,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityBase {
+public class ActivityCalculation {
 
-    @NotBlank
-    private String name;
+    private int score;
 
-    private String description;
-
-    private ActivityDisableReason disableReason;
-
-    private Map<String, String> criteria;
-
+    private List<Integer> observations; // The observations that contributed to the score
+    
 }

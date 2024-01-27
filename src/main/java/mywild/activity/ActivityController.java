@@ -58,4 +58,6 @@ public class ActivityController {
         return service.calculateActivity(Utils.getUserIdFromJwt(jwtToken), id);
     }
 
+    // TODO: Add endpoint for admin to disable an activity
+
 }

@@ -96,43 +96,6 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.7.0</version>
         </dependency>
-        <!-- TODO: Remove because this doesn't work for the "dirty" JSON responses from iNat... -->
-        <!-- OpenAPI Generator -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.14</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
-        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -193,78 +156,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!-- TODO: Remove because this doesn't work for the "dirty" JSON responses from iNat... -->
-    <!-- Usage: mvn clean compile -P openapi-generate-inat -->
-    <profiles>
-        <profile>
-            <id>openapi-generate-inat</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openapitools</groupId>
-                        <artifactId>openapi-generator-maven-plugin</artifactId>
-                        <version>7.2.0</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                                <configuration>
-                                    <inputSpec>https://api.inaturalist.org/v1/swagger.json</inputSpec>
-                                    <!-- Need to set this because the iNat spec gives errors -->
-                                    <skipValidateSpec>true</skipValidateSpec>
-                                    <!-- Handle iNat returning fields that aren't in the spec -->
-                                    <enumUnknownDefaultCase>true</enumUnknownDefaultCase>
-                                    <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
-                                    <!-- Try using legacy/java8-localdatetime instead of new java8
-                                    dates because iNat returns dates incompatible with their spec -->
-                                    <dateLibrary>java8-localdatetime</dateLibrary>
-                                    <!-- Set a custom user agent -->
-                                    <httpUserAgent>wildevents</httpUserAgent>
-                                    <!-- Generate the code -->
-                                    <generatorName>java</generatorName>
-                                    <library>native</library>
-                                    <output>${project.basedir}/openapi-inat/</output>
-                                    <cleanupOutput>true</cleanupOutput>
-                                    <addCompileSourceRoot>false</addCompileSourceRoot>
-                                    <modelPackage>org.inaturalist.model</modelPackage>
-                                    <apiPackage>org.inaturalist.api</apiPackage>
-                                    <invokerPackage>org.inaturalist</invokerPackage>
-                                    <!-- <apisToGenerate>...</apisToGenerate> -->
-                                    <!-- <modelsToGenerate>...</modelsToGenerate> -->
-                                    <generateModelTests>false</generateModelTests>
-                                    <generateApiTests>false</generateApiTests>
-                                    <!-- <configHelp>true</configHelp> -->
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.basedir}/openapi-inat/src/main/java</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

@@ -114,16 +114,8 @@ public class EventService {
             throw new ForbiddenException("Event cannot be calculated by this User!");
         makeSureEventIsNotClosed(entity);
         // Calculate all associated activities
-        // TODO: Implement the calculation logic
         activityRepo.findAll(new PartitionKey(id))
-            .forEach(activity -> {
-
-                // TODO: Do calculation
-                calculateService.calculateActivity(activity);
-                activity.setCalculated(ZonedDateTime.now());
-                activityRepo.save(activity);
-
-            });
+            .forEach(activity -> calculateService.calculateActivity(activity));
     }
 
     public @Valid Event adminJoinEvent(@NotNull String userId, @NotNull String id, @NotNull String adminUsername) {

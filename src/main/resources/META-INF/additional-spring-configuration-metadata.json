@@ -54,6 +54,11 @@
             "name": "mywild.wildevents.max-activities-per-event",
             "type": "java.lang.Integer",
             "description": "How many Activities can be added to an Event."
+        },
+        {
+            "name": "mywild.wildevents.max-inat-results-per-activity",
+            "type": "java.lang.Integer",
+            "description": "How many iNaturalist Observations can be fetched to calculate an Activity."
         }
     ]
 }
