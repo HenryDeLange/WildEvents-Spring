@@ -31,6 +31,12 @@ public class CalculateService {
     @Autowired
     private CalculateHunt calculateHunt;
 
+    @Autowired
+    private CalculateQuiz calculateQuiz;
+
+    @Autowired
+    private CalculateExplore calculateExplore;
+
     // TODO: Schedule/throttle this to keep to the iNat recommendations (one per second should be fine, update a status to show pending/busy/done)
 
     public void calculateActivity(@NotNull ActivityEntity activity) {
@@ -48,10 +54,10 @@ public class CalculateService {
                     activity = calculateHunt.calculate(event, activity);
                     break;
                 case QUIZ:
-                    // activity = xxx.calculate(event, activity);
+                    activity = calculateQuiz.calculate(event, activity);
                     break;
                 case EXPLORE:
-                    // activity = xxx.calculate(event, activity);
+                    activity = calculateExplore.calculate(event, activity);
                     break;
                 default:
                     throw new BadRequestException("Could not calculate the Activity!");

@@ -36,7 +36,6 @@ public class CalculateRace extends CalculateAbstract {
      *   - threatened
      *   - verifiable
      *   - quality_grade
-     *   - preferred_place_id
      *   - without_taxon_id
      * 
      * Unsupported iNat Query Params:
@@ -48,6 +47,7 @@ public class CalculateRace extends CalculateAbstract {
         if (activity.getCriteria().size() != 1)
             throw new BadRequestException("The Race Activity must have 1 step (only).");
         Map<String, String> criteria = activity.getCriteria().get(0);
+        // TODO: (for all) Maybe rather lowercase the criteria (and participants) in saving the activity, that way its not needed to check here
         Set<String> queryParamKeys = criteria.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
         if (!queryParamKeys.contains("taxon_id"))
             throw new BadRequestException("The Race Activity requires the 'taxon_id' to be specified.");
@@ -57,6 +57,8 @@ public class CalculateRace extends CalculateAbstract {
         // Fetch the data
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath("observations");
         criteria.entrySet().forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
+        // TODO: (for all) Paginate to find more results
+        // TODO: (for all) This should be throttled
         Observations fetchResults = restClient
                 .get()
                 .uri(configureBaseQueryParams(builder, event).toUriString())

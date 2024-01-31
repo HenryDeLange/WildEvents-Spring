@@ -19,49 +19,36 @@ import mywild.event.EventEntity;
 
 @Slf4j
 @Service
-public class CalculateHunt extends CalculateAbstract {
+public class CalculateQuiz extends CalculateAbstract {
 
     @Value("${mywild.wildevents.max-activity-steps}")
     private int maxSteps;
 
     /**
-     * Calculate the results of an Activity that is a "treasure hunt" by solving steps leading towards the final treasure.
+     * Calculate the results of an Activity that is a "quiz" by answering steps with the correct observation.
      * 
      * Recommended iNat Query Params:
      *   - (REQUIRED) taxon_id
-     *   - (REQUIRED) lat
-     *   - (REQUIRED) lng
-     *   - (REQUIRED) radius
      *   - captive
      *   - introduced
-     *   - threatened
      *   - verifiable
      *   - quality_grade
      *   - without_taxon_id
      * 
      * Unsupported iNat Query Params:
      *   - taxon_name
-     *   - nelat
-     *   - nelng
-     *   - swlat
-     *   - swlng
      */
     @Override
     public ActivityEntity calculate(EventEntity event, ActivityEntity activity) {
         // Validate
         if (activity.getCriteria().size() > maxSteps)
-            throw new BadRequestException("The Hunt Activity cannot have more than " + maxSteps + " steps.");
+            throw new BadRequestException("The Quiz Activity cannot have more than " + maxSteps + " steps.");
         for (Map<String, String> criteria : activity.getCriteria()) {
             Set<String> queryParamKeys = criteria.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
             if (!queryParamKeys.contains("taxon_id"))
-                throw new BadRequestException("The Hunt Activity requires the 'taxon_id' to be specified.");
-            if (!queryParamKeys.contains("lat") || !criteria.keySet().contains("lng") || !criteria.keySet().contains("radius"))
-                throw new BadRequestException("The Hunt Activity requires the 'lat', 'lng' and 'radius' to be specified.");
+                throw new BadRequestException("The Quiz Activity requires the 'taxon_id' to be specified.");
             if (queryParamKeys.contains("taxon_name"))
-                throw new BadRequestException("The Hunt Activity does not support the use of the 'taxon_name', use the 'taxon_id' instead.");
-            if (queryParamKeys.contains("nelat") || criteria.keySet().contains("nelng")
-                    || criteria.keySet().contains("swlat") || criteria.keySet().contains("swlng"))
-                throw new BadRequestException("The Race Activity does not support the use of 'nelat', 'nelng', 'swlat' or 'swlng', use 'lat', 'lng' and 'radius' instead.");
+                throw new BadRequestException("The Quiz Activity does not support the use of the 'taxon_name', use the 'taxon_id' instead.");
         }
         // Process the steps
         Set<String> participants = event.getParticipants().stream().map(String::toLowerCase).collect(Collectors.toSet());
@@ -80,7 +67,6 @@ public class CalculateHunt extends CalculateAbstract {
                 Map<String, ActivityCalculation> calculationResults = new HashMap<>(participants.size());
                 for (Observation observation : fetchResults.results()) {
                     String obsParticipant = observation.user().login().toLowerCase();
-                        // TODO: Maybe only gain half the points if the previous steps weren't completed?
                     calculationResults.putIfAbsent(obsParticipant, new ActivityCalculation(1, List.of(observation.id())));
                 }
                 if (calculationResults.size() < participants.size()) {
