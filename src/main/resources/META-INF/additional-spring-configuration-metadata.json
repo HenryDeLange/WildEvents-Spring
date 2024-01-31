@@ -59,6 +59,11 @@
             "name": "mywild.wildevents.max-inat-results-per-activity",
             "type": "java.lang.Integer",
             "description": "How many iNaturalist Observations can be fetched to calculate an Activity."
+        },
+        {
+            "name": "mywild.wildevents.max-activity-steps",
+            "type": "java.lang.Integer",
+            "description": "The maximum number of steps allowed per Activity."
         }
     ]
 }

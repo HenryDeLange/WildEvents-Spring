@@ -1,5 +1,6 @@
 package mywild.activity;
 
+import java.util.List;
 import java.util.Map;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,6 @@ public class ActivityBase {
 
     private ActivityDisableReason disableReason;
 
-    private Map<String, String> criteria;
+    private List<Map<String, String>> criteria;
 
 }

@@ -28,9 +28,13 @@ public class CalculateService {
     @Autowired
     private CalculateRace calculateRace;
 
+    @Autowired
+    private CalculateHunt calculateHunt;
+
     // TODO: Schedule/throttle this to keep to the iNat recommendations (one per second should be fine, update a status to show pending/busy/done)
 
     public void calculateActivity(@NotNull ActivityEntity activity) {
+        // TODO: Catch any errors and update status to show that it crashed, don't rerun unless user makes changes
         if (activity.getDisableReason() == null) {
             Optional<EventEntity> foundEvent = eventRepo.findById(activity.getEventId());
             if (!foundEvent.isPresent())
@@ -41,10 +45,13 @@ public class CalculateService {
                     activity = calculateRace.calculate(event, activity);
                     break;
                 case HUNT:
-                    activity = calculateRace.calculate(event, activity);
+                    activity = calculateHunt.calculate(event, activity);
                     break;
-                case ACHIEVEMENT:
-                    activity = calculateRace.calculate(event, activity);
+                case QUIZ:
+                    // activity = xxx.calculate(event, activity);
+                    break;
+                case EXPLORE:
+                    // activity = xxx.calculate(event, activity);
                     break;
                 default:
                     throw new BadRequestException("Could not calculate the Activity!");

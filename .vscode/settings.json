@@ -5,6 +5,8 @@
         "iNat",
         "iNaturalist",
         "MyWild",
+        "nelat",
+        "nelng",
         "nocrypt",
         "OpenAPI",
         "outform",
@@ -12,6 +14,8 @@
         "pubout",
         "RSASSA",
         "springframework",
+        "swlat",
+        "swlng",
         "topk",
         "WildEvents"
     ],
