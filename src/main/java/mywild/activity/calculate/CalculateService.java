@@ -1,6 +1,5 @@
 package mywild.activity.calculate;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import com.azure.cosmos.implementation.NotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import mywild.activity.ActivityEntity;
-import mywild.activity.ActivityRepository;
 import mywild.core.error.BadRequestException;
 import mywild.event.EventEntity;
 import mywild.event.EventRepository;
@@ -23,9 +21,6 @@ public class CalculateService {
     private EventRepository eventRepo;
 
     @Autowired
-    private ActivityRepository activityRepo;
-
-    @Autowired
     private CalculateRace calculateRace;
 
     @Autowired
@@ -37,10 +32,12 @@ public class CalculateService {
     @Autowired
     private CalculateExplore calculateExplore;
 
-    // TODO: Schedule/throttle this to keep to the iNat recommendations (one per second should be fine, update a status to show pending/busy/done)
+    // TODO: Implement better queuing than using synchronized
+    //       add activities to a list/queue [LinkedBlockingQueue] and use schedular [@Scheduled(fixedRate = 1000)]
+    //       but aso how to limit the 5 inat calls per activity?? (maybe just space activity schedules 5 seconds apart?) 
 
-    public void calculateActivity(@NotNull ActivityEntity activity) {
-        // TODO: Catch any errors and update status to show that it crashed, don't rerun unless user makes changes
+    public synchronized ActivityEntity calculateActivity(@NotNull ActivityEntity activity) {
+        log.debug("Preparing to calculate activity ({})", activity.getId());
         if (activity.getDisableReason() == null) {
             Optional<EventEntity> foundEvent = eventRepo.findById(activity.getEventId());
             if (!foundEvent.isPresent())
@@ -48,26 +45,26 @@ public class CalculateService {
             EventEntity event = foundEvent.get();
             switch (activity.getType()) {
                 case RACE:
-                    activity = calculateRace.calculate(event, activity);
+                    activity = calculateRace.process(event, activity);
                     break;
                 case HUNT:
-                    activity = calculateHunt.calculate(event, activity);
+                    activity = calculateHunt.process(event, activity);
                     break;
                 case QUIZ:
-                    activity = calculateQuiz.calculate(event, activity);
+                    activity = calculateQuiz.process(event, activity);
                     break;
                 case EXPLORE:
-                    activity = calculateExplore.calculate(event, activity);
+                    activity = calculateExplore.process(event, activity);
                     break;
                 default:
                     throw new BadRequestException("Could not calculate the Activity!");
             }
-            activity.setCalculated(ZonedDateTime.now());
-            activityRepo.save(activity);
         }
         else {
             log.info("Skipped calculating of disabled ({}) Activity ({}).", activity.getDisableReason(), activity.getId());
         }
+        log.debug("Finished calculating activity ({})", activity.getId());
+        return activity;
     }
 
 }

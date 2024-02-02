@@ -33,9 +33,10 @@ mywild:
         public: ${PUBLIC_KEY}
     cors: ${CORS}
     wildevents:
-        page-size: 10
+        page-size: 25
         max-activities-per-event: 5
         max-inat-results-per-activity: 20000
+        inat-results-per-page: 200
         max-activity-steps: 5
 
 spring:

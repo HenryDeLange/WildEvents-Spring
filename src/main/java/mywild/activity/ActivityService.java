@@ -1,7 +1,9 @@
 package mywild.activity;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -72,6 +74,7 @@ public class ActivityService {
         checkThatEventCanBeModified(validUser, validEvent);
         if (repo.countByEventId(validEvent.getId()) >= maxActivitiesPErEvent)
             throw new BadRequestException("No more Activities can be added to this Event!");
+        lowercaseCriteria(activityCreate);
         return ActivityMapper.INSTANCE.entityToDto(
             repo.save(ActivityMapper.INSTANCE.dtoToEntity(
                 ActivityMapper.INSTANCE.createDtoToFullDto(activityCreate))));
@@ -85,6 +88,7 @@ public class ActivityService {
         ActivityEntity entity = foundEntity.get();
         EventEntity validEvent = getValidEvent(validUser, entity.getEventId(), false);
         checkThatEventCanBeModified(validUser, validEvent);
+        lowercaseCriteria(activityBase);
         return ActivityMapper.INSTANCE.entityToDto(
             repo.save(ActivityMapper.INSTANCE.dtoToExistingEntity(entity, activityBase)));
     }
@@ -108,9 +112,8 @@ public class ActivityService {
         ActivityEntity entity = foundEntity.get();
         EventEntity validEvent = getValidEvent(validUser, entity.getEventId(), false);
         checkThatEventCanBeModified(validUser, validEvent);
-        calculateService.calculateActivity(entity);
-        return ActivityMapper.INSTANCE.entityToDto(
-            repo.save(entity));
+        entity = calculateService.calculateActivity(entity);
+        return ActivityMapper.INSTANCE.entityToDto(entity);
     }
 
     private void checkThatEventCanBeModified(UserEntity user, EventEntity event) {
@@ -137,6 +140,14 @@ public class ActivityService {
         if (!userEntity.isPresent())
             throw new ForbiddenException("Incorrect User ID!");
         return userEntity.get();
+    }
+
+    private void lowercaseCriteria(ActivityBase activityBase) {
+
+        // TODO: Also validate that the criteria has the correct required key-value entries
+
+        activityBase.getCriteria().forEach(criteriaMap -> criteriaMap.entrySet().stream()
+            .collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue)));
     }
 
 }

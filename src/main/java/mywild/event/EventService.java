@@ -162,8 +162,9 @@ public class EventService {
         if (!entity.getAdmins().contains(validUser.getUsername()))
             throw new ForbiddenException("This User cannot add a Participant to this Event!");
         makeSureEventIsNotClosed(entity);
-        if (!entity.getParticipants().contains(iNatName))
-            entity.getParticipants().add(iNatName);
+        String participant = iNatName.toLowerCase();
+        if (!entity.getParticipants().contains(participant))
+            entity.getParticipants().add(participant);
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }
@@ -177,8 +178,9 @@ public class EventService {
         if (!entity.getAdmins().contains(validUser.getUsername()))
             throw new ForbiddenException("This User cannot remove a Participant from this Event!");
         makeSureEventIsNotClosed(entity);
-        if (entity.getParticipants().contains(iNatName))
-            entity.getParticipants().remove(iNatName);
+        String participant = iNatName.toLowerCase();
+        if (entity.getParticipants().contains(participant))
+            entity.getParticipants().remove(participant);
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }

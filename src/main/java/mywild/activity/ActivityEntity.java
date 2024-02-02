@@ -41,6 +41,8 @@ public class ActivityEntity extends BaseEntity {
     @NotNull
     private ActivityType type;
 
+    private ActivityStatus status;
+
     private ActivityDisableReason disableReason;
 
     private ZonedDateTime calculated;

@@ -4,11 +4,11 @@ public record Taxon(
     int id,
     boolean is_active,
     String min_species_ancestry,
-    boolean endemic,
-    boolean threatened,
+    // boolean endemic,
+    // boolean threatened,
     int rank_level,
     String rank,
-    boolean introduced,
-    String preferred_common_name,
+    // boolean introduced,
+    // String preferred_common_name,
     String name
 ) {}

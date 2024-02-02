@@ -23,6 +23,8 @@ public class ActivityBase {
 
     private String description;
 
+    private ActivityStatus status;
+
     private ActivityDisableReason disableReason;
 
     private List<Map<String, String>> criteria;
