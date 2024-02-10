@@ -24,6 +24,6 @@ public class Activity extends ActivityCreate {
 
     private ZonedDateTime calculated;
 
-    private List<Map<String, ActivityCalculation>> results;
+    private List<ActivityStepResult> results;
 
 }

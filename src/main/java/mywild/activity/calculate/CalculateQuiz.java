@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import mywild.activity.ActivityCalculation;
 import mywild.activity.ActivityEntity;
+import mywild.activity.ActivityStep;
+import mywild.activity.ActivityStepResult;
 import mywild.activity.calculate.inaturalist.Observation;
 import mywild.core.error.BadRequestException;
 
@@ -34,8 +36,8 @@ public class CalculateQuiz extends CalculateAbstract {
 
     @Override
     protected void doValidation(ActivityEntity activity) {
-        for (Map<String, String> criteria : activity.getCriteria()) {
-            Set<String> queryParamKeys = criteria.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
+        for (ActivityStep step : activity.getSteps()) {
+            Set<String> queryParamKeys = step.getCriteria().keySet();
             if (!queryParamKeys.contains("taxon_id"))
                 throw new BadRequestException("The Quiz Activity requires the 'taxon_id' to be specified.");
             if (queryParamKeys.contains("taxon_name"))
@@ -44,8 +46,7 @@ public class CalculateQuiz extends CalculateAbstract {
     }
 
     @Override
-    protected Map<String, ActivityCalculation> doCalculation(
-            List<String> participants, Map<String, String> criteria, List<Observation> observations) {
+    protected ActivityStepResult doCalculation(List<String> participants, ActivityStep step, List<Observation> observations) {
         Map<String, ActivityCalculation> calculationResults = new HashMap<>(participants.size());
         for (Observation observation : observations) {
             String obsParticipant = observation.user().login().toLowerCase();
@@ -56,7 +57,7 @@ public class CalculateQuiz extends CalculateAbstract {
                 calculationResults.putIfAbsent(participant, new ActivityCalculation(0, null));
             }
         }
-        return calculationResults;
+        return new ActivityStepResult(calculationResults);
     }
 
 }

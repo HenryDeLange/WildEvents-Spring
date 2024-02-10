@@ -9,7 +9,9 @@ import com.azure.spring.data.cosmos.repository.CosmosRepository;
 @Repository
 public interface EventRepository extends CosmosRepository<EventEntity, String> {
 
-    Page<EventEntity> findAllByVisibilityOrAdminsIgnoreCaseContainsOrParticipantsIgnoreCaseContainsOrderByStartDescNameAsc(
+    // TODO: The contains admin part (and ordering?) doesn't work... maybe easiest to just turn this into a string when storing it?
+
+    Page<EventEntity> findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartDescNameAsc(
         EventVisibilityType visibility, String adminId, String iNatId, Pageable pageable);
 
 }

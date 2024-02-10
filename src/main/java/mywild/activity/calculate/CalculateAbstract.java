@@ -15,6 +15,8 @@ import mywild.activity.ActivityDisableReason;
 import mywild.activity.ActivityEntity;
 import mywild.activity.ActivityRepository;
 import mywild.activity.ActivityStatus;
+import mywild.activity.ActivityStep;
+import mywild.activity.ActivityStepResult;
 import mywild.activity.calculate.inaturalist.Observation;
 import mywild.activity.calculate.inaturalist.Observations;
 import mywild.core.error.BadRequestException;
@@ -51,14 +53,14 @@ public abstract class CalculateAbstract {
             validate(activity);
             // Process each Criteria
             processing:
-            for (Map<String, String> criteriaMap : activity.getCriteria()) {
+            for (ActivityStep step : activity.getSteps()) {
                 // Fetch Data
                 log.debug("Preparing to fetch all observations from iNat...");
                 int totalResults = maxResults;
                 int page = 1; // Starts at 1 not 0
                 List<Observation> observations = new ArrayList<>();
                 while (page * perPage < totalResults) {
-                    Observations observationsPage = fetch(event, criteriaMap, page++);
+                    Observations observationsPage = fetch(event, step, page++);
                     if (observationsPage.total_results() <= maxResults) {
                         observations.addAll(observationsPage.results());
                     }
@@ -75,7 +77,7 @@ public abstract class CalculateAbstract {
                 log.debug("Done fetching all observations from iNat");
                 // Calculate Results
                 log.debug("Preparing to calculate {} observations...", observations.size());
-                activity.getResults().add(doCalculation(event.getParticipants(), criteriaMap, observations));
+                activity.getResults().add(doCalculation(event.getParticipants(), step, observations));
                 activity.setCalculated(ZonedDateTime.now());
                 activity = saveStatus(activity, ActivityStatus.CALCULATED);
                 log.debug("Calculated");
@@ -98,14 +100,14 @@ public abstract class CalculateAbstract {
     }
 
     private void validate(ActivityEntity activity) {
-        if (activity.getCriteria().isEmpty())
+        if (activity.getSteps().isEmpty())
             throw new BadRequestException("The Activity must have at least 1 step.");
-        if (activity.getCriteria().size() > maxSteps)
+        if (activity.getSteps().size() > maxSteps)
             throw new BadRequestException("The Activity cannot have more than " + maxSteps + " steps.");
         doValidation(activity);
     }
 
-    private Observations fetch(EventEntity event, Map<String, String> criteria, int page) {
+    private Observations fetch(EventEntity event, ActivityStep step, int page) {
         // TODO: Implement better throttling than sleeping the thread
         try {
             log.debug("Sleep before fetching, in order to limit to the requests per minute sent to iNaturalist...");
@@ -116,7 +118,7 @@ public abstract class CalculateAbstract {
         }
         log.debug("Fetching page {}...", page);
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath("observations");
-        criteria.entrySet().forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
+        step.getCriteria().entrySet().forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
         try {
             return restClient
                 .get()
@@ -143,7 +145,6 @@ public abstract class CalculateAbstract {
 
     protected abstract void doValidation(ActivityEntity activity);
 
-    protected abstract Map<String, ActivityCalculation> doCalculation(
-            List<String> participants, Map<String, String> criteria, List<Observation> observations);
+    protected abstract ActivityStepResult doCalculation(List<String> participants, ActivityStep step, List<Observation> observations);
     
 }

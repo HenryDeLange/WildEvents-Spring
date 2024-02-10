@@ -26,14 +26,19 @@ JWT_AUDIENCE=development
 # Set to the frontend's URL
 CORS=*
 # Use value from private_key_pkcs8.pem (only the base64 key, not the header/footer)
-PRIVATE_KEY=
+PRIVATE_KEY=...
 # Use value from public_key.pem (only the base64 key, not the header/footer)
-PUBLIC_KEY=
+PUBLIC_KEY=...
 
 #### COSMOS DB ####
-AZURE_COSMOS_KEY=
-AZURE_COSMOS_ENDPOINT=
-AZURE_COSMOS_DATABASE=
+AZURE_COSMOS_KEY=...
+AZURE_COSMOS_ENDPOINT=...
+AZURE_COSMOS_DATABASE=...
 ```
 
 In development you can also add `server.error.include-stacktrace=always` to the `.env` file to help troubleshoot exceptions.
+
+#### Properties
+See the [application.yml](./src/main/resources/application.yml) file.
+
+These properties can be overwritten using environment variables.

@@ -143,10 +143,8 @@ public class ActivityService {
     }
 
     private void lowercaseCriteria(ActivityBase activityBase) {
-
         // TODO: Also validate that the criteria has the correct required key-value entries
-
-        activityBase.getCriteria().forEach(criteriaMap -> criteriaMap.entrySet().stream()
+        activityBase.getSteps().forEach(criteriaMap -> criteriaMap.getCriteria().entrySet().stream()
             .collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue)));
     }
 

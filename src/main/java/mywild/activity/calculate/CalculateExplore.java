@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import mywild.activity.ActivityCalculation;
 import mywild.activity.ActivityEntity;
+import mywild.activity.ActivityStep;
+import mywild.activity.ActivityStepResult;
 import mywild.activity.calculate.inaturalist.Observation;
 import mywild.core.error.BadRequestException;
 
@@ -43,20 +45,20 @@ public class CalculateExplore extends CalculateAbstract {
 
     @Override
     protected void doValidation(ActivityEntity activity) {
-        for (Map<String, String> criteria : activity.getCriteria()) {
-            Set<String> queryParamKeys = criteria.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
-            if (!queryParamKeys.contains("nelat") || !criteria.keySet().contains("nelng")
-                    || !criteria.keySet().contains("swlat") || !criteria.keySet().contains("swlng"))
+        for (ActivityStep step : activity.getSteps()) {
+            Set<String> queryParamKeys = step.getCriteria().keySet();
+            if (!queryParamKeys.contains("nelat") || !queryParamKeys.contains("nelng")
+                    || !queryParamKeys.contains("swlat") || !queryParamKeys.contains("swlng"))
                 throw new BadRequestException("The Explore Activity requires the 'nelat', 'nelng', 'swlat' and 'swlng' to be specified.");
-            if (queryParamKeys.contains("lat") || criteria.keySet().contains("lng") || criteria.keySet().contains("radius"))
+            if (queryParamKeys.contains("lat") || queryParamKeys.contains("lng") || queryParamKeys.contains("radius"))
                 throw new BadRequestException("The Explore Activity does not support the use of 'lat', 'lng' and 'radius', use 'nelat', 'nelng', 'swlat' and 'swlng' instead.");
         }
     }
 
     @Override
-    protected Map<String, ActivityCalculation> doCalculation(
-            List<String> participants, Map<String, String> criteria, List<Observation> observations) {
+    protected ActivityStepResult doCalculation(List<String> participants, ActivityStep step, List<Observation> observations) {
         Map<String, ActivityCalculation> calculationResults = new HashMap<>(participants.size());
+        Map<String, String> criteria = step.getCriteria();
         double neLat = Double.parseDouble(criteria.get("nelat"));
         double neLng = Double.parseDouble(criteria.get("nelng"));
         double swLat = Double.parseDouble(criteria.get("swlat"));
@@ -111,7 +113,7 @@ public class CalculateExplore extends CalculateAbstract {
                 calculationResults.putIfAbsent(participant, new ActivityCalculation(0, null));
             }
         }
-        return calculationResults;
+        return new ActivityStepResult(calculationResults);
     }
 
 }

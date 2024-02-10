@@ -10,6 +10,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import mywild.activity.ActivityCalculation;
 import mywild.activity.ActivityEntity;
+import mywild.activity.ActivityStep;
+import mywild.activity.ActivityStepResult;
 import mywild.activity.calculate.inaturalist.Observation;
 import mywild.core.error.BadRequestException;
 
@@ -37,9 +39,9 @@ public class CalculateRace extends CalculateAbstract {
 
     @Override
     protected void doValidation(ActivityEntity activity) {
-        if (activity.getCriteria().size() != 1)
+        if (activity.getSteps().size() != 1)
             throw new BadRequestException("The Race Activity must have 1 step (only).");
-        Set<String> queryParamKeys = activity.getCriteria().get(0).keySet();
+        Set<String> queryParamKeys = activity.getSteps().get(0).getCriteria().keySet();
         if (!queryParamKeys.contains("taxon_id"))
             throw new BadRequestException("The Race Activity requires the 'taxon_id' to be specified.");
         if (queryParamKeys.contains("taxon_name"))
@@ -47,9 +49,8 @@ public class CalculateRace extends CalculateAbstract {
     }
 
     @Override
-    protected Map<String, ActivityCalculation> doCalculation(
-            List<String> participants, Map<String, String> criteria, List<Observation> observations) {
-        List<String> activityTaxa = new ArrayList<>(Arrays.asList(criteria.get("taxon_id").split(",")));
+    protected ActivityStepResult doCalculation(List<String> participants, ActivityStep step, List<Observation> observations) {
+        List<String> activityTaxa = new ArrayList<>(Arrays.asList(step.getCriteria().get("taxon_id").split(",")));
         Map<String, List<Observation>> qualifiedObservations = new HashMap<>(activityTaxa.size());
         for (Observation observation : observations) {
             for (String ancestor : observation.taxon().min_species_ancestry().split(",")) {
@@ -83,7 +84,7 @@ public class CalculateRace extends CalculateAbstract {
                 calculation.getObservations().add(observation.id());
             }
         }
-        return calculationResults;
+        return new ActivityStepResult(calculationResults);
     }
 
 }

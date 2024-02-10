@@ -1,8 +1,6 @@
 package mywild.activity;
 
-import java.util.List;
 import java.util.Map;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,17 +14,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityBase {
+public class ActivityStepResult {
 
-    @NotBlank
-    private String name;
-
-    private String description;
-
-    private ActivityStatus status;
-
-    private ActivityDisableReason disableReason;
-
-    private List<ActivityStep> steps;
+    private Map<String, ActivityCalculation> criteria; // The key is the participant
 
 }

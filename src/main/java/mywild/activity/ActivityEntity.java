@@ -47,8 +47,8 @@ public class ActivityEntity extends BaseEntity {
 
     private ZonedDateTime calculated;
 
-    private List<Map<String, String>> criteria;
+    private List<ActivityStep> steps;
 
-    private List<Map<String, ActivityCalculation>> results;
+    private List<ActivityStepResult> results;
 
 }

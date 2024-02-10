@@ -43,7 +43,7 @@ public class EventService {
 
     public @Valid Paged<Event> findEvents(@NotNull String userId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
-        Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsIgnoreCaseContainsOrParticipantsIgnoreCaseContainsOrderByStartDescNameAsc(
+        Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartDescNameAsc(
             EventVisibilityType.PUBLIC, validUser.getUsername(), validUser.getInaturalist(),
             CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
         return new Paged<>(
@@ -153,30 +153,39 @@ public class EventService {
             repo.save(entity));
     }
 
-    public @Valid Event participantJoinEvent(@NotNull String userId, @NotNull String id, @NotNull String iNatName) {
+    public @Valid Event participantJoinEvent(@NotNull String userId, @NotNull String userINatName, @NotNull String id, @NotNull String iNatName) {
         UserEntity validUser = getValidUser(userId);
         Optional<EventEntity> foundEntity = repo.findById(id);
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to add a Participant to!");
+        String participantToAdd = iNatName.toLowerCase();
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
-            throw new ForbiddenException("This User cannot add a Participant to this Event!");
+        if (!entity.getAdmins().contains(validUser.getUsername())) {
+            if (entity.getVisibility() == EventVisibilityType.PRIVATE)
+                throw new ForbiddenException("Only admins can add participants to this Event!");
+            if (!participantToAdd.equals(userINatName))
+                throw new ForbiddenException("This User cannot add the Participant to this Event!");
+        }
         makeSureEventIsNotClosed(entity);
-        String participant = iNatName.toLowerCase();
-        if (!entity.getParticipants().contains(participant))
-            entity.getParticipants().add(participant);
+        if (!entity.getParticipants().contains(participantToAdd))
+            entity.getParticipants().add(participantToAdd);
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }
 
-    public @Valid Event participantLeaveEvent(@NotNull String userId, @NotNull String id, @NotNull String iNatName) {
+    public @Valid Event participantLeaveEvent(@NotNull String userId, @NotNull String userINatName, @NotNull String id, @NotNull String iNatName) {
         UserEntity validUser = getValidUser(userId);
         Optional<EventEntity> foundEntity = repo.findById(id);
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to remove a Participant from!");
+        String participantToRemove = iNatName.toLowerCase();
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
-            throw new ForbiddenException("This User cannot remove a Participant from this Event!");
+        if (!entity.getAdmins().contains(validUser.getUsername())) {
+            if (entity.getVisibility() == EventVisibilityType.PRIVATE)
+                throw new ForbiddenException("Only admins can add participants to this Event!");
+            if (!participantToRemove.equals(userINatName))
+                throw new ForbiddenException("This User cannot add the Participant to this Event!");
+        }
         makeSureEventIsNotClosed(entity);
         String participant = iNatName.toLowerCase();
         if (entity.getParticipants().contains(participant))

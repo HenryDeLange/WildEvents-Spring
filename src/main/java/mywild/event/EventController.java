@@ -24,14 +24,15 @@ public class EventController {
     
     @Operation(summary = "Find all Events associated with the User (admin, participant or public).")
     @GetMapping("/events")
-    public Paged<Event> findEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String requestContinuation, JwtAuthenticationToken jwtToken) {
+    public Paged<Event> findEvents(@RequestParam(defaultValue = "0") int page, @
+            RequestParam(required = false) String requestContinuation, JwtAuthenticationToken jwtToken) {
         return service.findEvents(Utils.getUserIdFromJwt(jwtToken), page, requestContinuation);
     }
 
     @Operation(summary = "Find an Event associated with the User (admin, participant or public).")
-    @GetMapping("/events/{id}")
-    public Event findEvent(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        return service.findEvent(Utils.getUserIdFromJwt(jwtToken), id);
+    @GetMapping("/events/{eventId}")
+    public Event findEvent(@PathVariable String eventId, JwtAuthenticationToken jwtToken) {
+        return service.findEvent(Utils.getUserIdFromJwt(jwtToken), eventId);
     }
 
     @Operation(summary = "Create an Event.")
@@ -41,45 +42,45 @@ public class EventController {
     }
 
     @Operation(summary = "Update an Event.")
-    @PutMapping("/events/{id}")
-    public Event updateEvent(@PathVariable String id, @RequestBody EventBase dto, JwtAuthenticationToken jwtToken) {
-        return service.updateEvent(Utils.getUserIdFromJwt(jwtToken), id, dto);
+    @PutMapping("/events/{eventId}")
+    public Event updateEvent(@PathVariable String eventId, @RequestBody EventBase dto, JwtAuthenticationToken jwtToken) {
+        return service.updateEvent(Utils.getUserIdFromJwt(jwtToken), eventId, dto);
     }
 
     @Operation(summary = "Delete an Event.")
-    @DeleteMapping("/events/{id}")
-    public void deleteEvent(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        service.deleteEvent(Utils.getUserIdFromJwt(jwtToken), id);
+    @DeleteMapping("/events/{eventId}")
+    public void deleteEvent(@PathVariable String eventId, JwtAuthenticationToken jwtToken) {
+        service.deleteEvent(Utils.getUserIdFromJwt(jwtToken), eventId);
     }
 
     @Operation(summary = "Calculate all of the Activities in the Event.")
-    @PostMapping("/events/{id}/calculate")
-    public void calculateEvent(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        service.calculateEvent(Utils.getUserIdFromJwt(jwtToken), id);
+    @PostMapping("/events/{eventId}/calculate")
+    public void calculateEvent(@PathVariable String eventId, JwtAuthenticationToken jwtToken) {
+        service.calculateEvent(Utils.getUserIdFromJwt(jwtToken), eventId);
     }
 
     @Operation(summary = "Join the Event as an Admin.")
-    @PostMapping("/events/{id}/admins/{adminId}")
-    public Event adminJoinEvent(@PathVariable String id, @PathVariable String adminId, JwtAuthenticationToken jwtToken) {
-        return service.adminJoinEvent(Utils.getUserIdFromJwt(jwtToken), id, adminId);
+    @PostMapping("/events/{eventId}/admins/{adminId}")
+    public Event adminJoinEvent(@PathVariable String eventId, @PathVariable String adminId, JwtAuthenticationToken jwtToken) {
+        return service.adminJoinEvent(Utils.getUserIdFromJwt(jwtToken), eventId, adminId);
     }
 
     @Operation(summary = "Leave the Event as an Admin.")
-    @DeleteMapping("/events/{id}/admins/{adminId}")
-    public Event adminLeaveEvent(@PathVariable String id, @PathVariable String adminId, JwtAuthenticationToken jwtToken) {
-        return service.adminLeaveEvent(Utils.getUserIdFromJwt(jwtToken), id, adminId);
+    @DeleteMapping("/events/{eventId}/admins/{adminId}")
+    public Event adminLeaveEvent(@PathVariable String eventId, @PathVariable String adminId, JwtAuthenticationToken jwtToken) {
+        return service.adminLeaveEvent(Utils.getUserIdFromJwt(jwtToken), eventId, adminId);
     }
 
     @Operation(summary = "Join the Event as a Participant.")
-    @PostMapping("/events/{id}/participants/{iNatId}")
-    public Event participantJoinEvent(@PathVariable String id, @PathVariable String iNatId, JwtAuthenticationToken jwtToken) {
-        return service.participantJoinEvent(Utils.getUserIdFromJwt(jwtToken), id, iNatId);
+    @PostMapping("/events/{eventId}/participants/{iNatId}")
+    public Event participantJoinEvent(@PathVariable String eventId, @PathVariable String iNatId, JwtAuthenticationToken jwtToken) {
+        return service.participantJoinEvent(Utils.getUserIdFromJwt(jwtToken), Utils.getINatNameFromJwt(jwtToken), eventId, iNatId);
     }
 
     @Operation(summary = "Leave the Event as a Participant.")
-    @DeleteMapping("/events/{id}/participants/{iNatId}")
-    public Event participantLeaveEvent(@PathVariable String id, @PathVariable String iNatId, JwtAuthenticationToken jwtToken) {
-        return service.participantLeaveEvent(Utils.getUserIdFromJwt(jwtToken), id, iNatId);
+    @DeleteMapping("/events/{eventId}/participants/{iNatId}")
+    public Event participantLeaveEvent(@PathVariable String eventId, @PathVariable String iNatId, JwtAuthenticationToken jwtToken) {
+        return service.participantLeaveEvent(Utils.getUserIdFromJwt(jwtToken), Utils.getINatNameFromJwt(jwtToken), eventId, iNatId);
     }
 
 }
