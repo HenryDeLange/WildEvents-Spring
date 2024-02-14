@@ -16,6 +16,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ActivityStepResult {
 
-    private Map<String, ActivityCalculation> criteria; // The key is the participant
+    private Map<String, ActivityCalculation> participantScores; // The key is the participant
 
 }
