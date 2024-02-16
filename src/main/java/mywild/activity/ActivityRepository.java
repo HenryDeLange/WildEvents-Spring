@@ -1,14 +1,13 @@
 package mywild.activity;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.azure.spring.data.cosmos.repository.CosmosRepository;
 
 @Repository
 public interface ActivityRepository extends CosmosRepository<ActivityEntity, String> {
 
-    Page<ActivityEntity> findAllByEventIdOrderByNameAsc(String eventId, Pageable pageable);
+    List<ActivityEntity> findAllByEventIdOrderByNameAsc(String eventId);
 
     int countByEventId(String eventId);
 

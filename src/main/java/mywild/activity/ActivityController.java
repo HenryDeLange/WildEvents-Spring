@@ -1,5 +1,6 @@
 package mywild.activity;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mywild.core.rest.Paged;
 import mywild.core.security.jwt.Utils;
 
 @Tag(name = "Activities", description = "Manage Activities.")
@@ -24,8 +24,8 @@ public class ActivityController {
 
     @Operation(summary = "Find all Activities associated with the Event.")
     @GetMapping("/activities")
-    public Paged<Activity> findActivities(@RequestParam String eventId, @RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String requestContinuation, JwtAuthenticationToken jwtToken) {
-        return service.findActivities(Utils.getUserIdFromJwt(jwtToken), eventId, page, requestContinuation);
+    public List<Activity> findActivities(@RequestParam String eventId, JwtAuthenticationToken jwtToken) {
+        return service.findActivities(Utils.getUserIdFromJwt(jwtToken), eventId);
     }
 
     @Operation(summary = "Find an Activity associated with the Event.")

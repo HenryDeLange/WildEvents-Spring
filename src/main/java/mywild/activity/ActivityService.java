@@ -1,23 +1,20 @@
 package mywild.activity;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import com.azure.spring.data.cosmos.core.query.CosmosPageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import mywild.activity.calculate.CalculateService;
 import mywild.core.error.BadRequestException;
 import mywild.core.error.ForbiddenException;
 import mywild.core.error.NotFoundException;
-import mywild.core.rest.Paged;
 import mywild.event.EventEntity;
 import mywild.event.EventRepository;
 import mywild.event.EventVisibilityType;
@@ -32,7 +29,7 @@ public class ActivityService {
     private int pageSize;
 
     @Value("${mywild.wildevents.max-activities-per-event}")
-    private int maxActivitiesPErEvent;
+    private int maxActivitiesPerEvent;
 
     @Autowired
     private ActivityRepository repo;
@@ -46,16 +43,11 @@ public class ActivityService {
     @Autowired
     private CalculateService calculateService;
 
-    public @Valid Paged<Activity> findActivities(@NotNull String userId, @NotNull String eventId, int page, String requestContinuation) {
+    public @Valid List<Activity> findActivities(@NotNull String userId, @NotNull String eventId) {
         UserEntity validUser = getValidUser(userId);
         EventEntity validEvent = getValidEvent(validUser, eventId, true); // Validate event
-        Page<ActivityEntity> entities = repo.findAllByEventIdOrderByNameAsc(validEvent.getId(),
-            CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
-        return new Paged<>(
-            page, pageSize, entities.getTotalElements(),
-            entities.getContent().stream().map(ActivityMapper.INSTANCE::entityToDto).toList(),
-            entities.isFirst(), entities.isLast(),
-            ((CosmosPageRequest) entities.getPageable()).getRequestContinuation());
+        List<ActivityEntity> entities = repo.findAllByEventIdOrderByNameAsc(validEvent.getId());
+        return entities.stream().map(ActivityMapper.INSTANCE::entityToDto).toList();
     }
 
     public @Valid Activity findActivity(@NotNull String userId, @NotNull String id) {
@@ -72,15 +64,15 @@ public class ActivityService {
         UserEntity validUser = getValidUser(userId);
         EventEntity validEvent = getValidEvent(validUser, activityCreate.getEventId(), false);
         checkThatEventCanBeModified(validUser, validEvent);
-        if (repo.countByEventId(validEvent.getId()) >= maxActivitiesPErEvent)
+        if (repo.countByEventId(validEvent.getId()) >= maxActivitiesPerEvent)
             throw new BadRequestException("No more Activities can be added to this Event!");
         lowercaseCriteria(activityCreate);
-        return ActivityMapper.INSTANCE.entityToDto(
-            repo.save(ActivityMapper.INSTANCE.dtoToEntity(
-                ActivityMapper.INSTANCE.createDtoToFullDto(activityCreate))));
+        return ActivityMapper.INSTANCE.entityToDto(repo
+                .save(ActivityMapper.INSTANCE.dtoToEntity(ActivityMapper.INSTANCE.createDtoToFullDto(activityCreate))));
     }
 
-    public @Valid Activity updateActivity(@NotNull String userId, @NotNull String id, @Valid ActivityBase activityBase) {
+    public @Valid Activity updateActivity(@NotNull String userId, @NotNull String id,
+            @Valid ActivityBase activityBase) {
         UserEntity validUser = getValidUser(userId);
         Optional<ActivityEntity> foundEntity = repo.findById(id);
         if (!foundEntity.isPresent())
@@ -89,8 +81,8 @@ public class ActivityService {
         EventEntity validEvent = getValidEvent(validUser, entity.getEventId(), false);
         checkThatEventCanBeModified(validUser, validEvent);
         lowercaseCriteria(activityBase);
-        return ActivityMapper.INSTANCE.entityToDto(
-            repo.save(ActivityMapper.INSTANCE.dtoToExistingEntity(entity, activityBase)));
+        return ActivityMapper.INSTANCE
+                .entityToDto(repo.save(ActivityMapper.INSTANCE.dtoToExistingEntity(entity, activityBase)));
     }
 
     public void deleteActivity(@NotNull String userId, @NotNull String id) {
@@ -128,8 +120,7 @@ public class ActivityService {
         if (!foundEntity.isPresent())
             throw new NotFoundException("The Event associated with this Activity cannot be found!");
         EventEntity entity = foundEntity.get();
-        if (entity.getVisibility() == EventVisibilityType.PRIVATE
-                && !entity.getAdmins().contains(user.getUsername())
+        if (entity.getVisibility() == EventVisibilityType.PRIVATE && !entity.getAdmins().contains(user.getUsername())
                 && !(canBeParticipant && entity.getParticipants().contains(user.getInaturalist())))
             throw new ForbiddenException("Event not accessible by this User!");
         return entity;
@@ -145,7 +136,7 @@ public class ActivityService {
     private void lowercaseCriteria(ActivityBase activityBase) {
         // TODO: Also validate that the criteria has the correct required key-value entries
         activityBase.getSteps().forEach(criteriaMap -> criteriaMap.getCriteria().entrySet().stream()
-            .collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue)));
+                .collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue)));
     }
 
 }
