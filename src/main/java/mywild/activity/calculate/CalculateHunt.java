@@ -66,7 +66,7 @@ public class CalculateHunt extends CalculateAbstract {
                 calculationResults.putIfAbsent(participant, new ActivityCalculation(0, null));
             }
         }
-        return new ActivityStepResult(calculationResults);
+        return new ActivityStepResult(step.getId(), calculationResults);
     }
 
 }

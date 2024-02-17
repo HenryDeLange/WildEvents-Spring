@@ -18,6 +18,9 @@ import lombok.experimental.SuperBuilder;
 public class ActivityStep {
 
     @NotBlank
+    private String id;
+
+    @NotBlank
     private String description;
 
     private Map<String, String> criteria; // The key is the iNat query parameter

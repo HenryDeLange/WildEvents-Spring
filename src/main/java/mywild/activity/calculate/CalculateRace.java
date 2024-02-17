@@ -84,7 +84,7 @@ public class CalculateRace extends CalculateAbstract {
                 calculation.getObservations().add(observation.id());
             }
         }
-        return new ActivityStepResult(calculationResults);
+        return new ActivityStepResult(step.getId(), calculationResults);
     }
 
 }

@@ -45,7 +45,7 @@ public abstract class CalculateAbstract {
     public final ActivityEntity process(EventEntity event, ActivityEntity activity) {
         try {
             // Start
-            activity.setResults(new ArrayList<>());
+            activity.setResults(new ArrayList<>(maxSteps));
             activity.setCalculated(null);
             activity.setDisableReason(null);
             activity = saveStatus(activity, ActivityStatus.CALCULATING);
