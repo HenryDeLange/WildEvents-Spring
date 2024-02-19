@@ -29,9 +29,9 @@ public class ActivityController {
     }
 
     @Operation(summary = "Find an Activity associated with the Event.")
-    @GetMapping("/activities/{id}")
-    public Activity findActivity(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        return service.findActivity(Utils.getUserIdFromJwt(jwtToken), id);
+    @GetMapping("/activities/{activityId}")
+    public Activity findActivity(@PathVariable String activityId, JwtAuthenticationToken jwtToken) {
+        return service.findActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
     }
 
     @Operation(summary = "Create an Activity.")
@@ -41,21 +41,21 @@ public class ActivityController {
     }
 
     @Operation(summary = "Update an Activity.")
-    @PutMapping("/activities/{id}")
-    public Activity updateActivity(@PathVariable String id, @RequestBody ActivityBase dto, JwtAuthenticationToken jwtToken) {
-        return service.updateActivity(Utils.getUserIdFromJwt(jwtToken), id, dto);
+    @PutMapping("/activities/{activityId}")
+    public Activity updateActivity(@PathVariable String activityId, @RequestBody ActivityBase dto, JwtAuthenticationToken jwtToken) {
+        return service.updateActivity(Utils.getUserIdFromJwt(jwtToken), activityId, dto);
     }
 
     @Operation(summary = "Delete an Activity.")
-    @DeleteMapping("/activities/{id}")
-    public void deleteActivity(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        service.deleteActivity(Utils.getUserIdFromJwt(jwtToken), id);
+    @DeleteMapping("/activities/{activityId}")
+    public void deleteActivity(@PathVariable String activityId, JwtAuthenticationToken jwtToken) {
+        service.deleteActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
     }
 
     @Operation(summary = "Calculate the Activity.")
-    @PostMapping("/activities/{id}/calculate")
-    public Activity calculateActivity(@PathVariable String id, JwtAuthenticationToken jwtToken) {
-        return service.calculateActivity(Utils.getUserIdFromJwt(jwtToken), id);
+    @PostMapping("/activities/{activityId}/calculate")
+    public Activity calculateActivity(@PathVariable String activityId, JwtAuthenticationToken jwtToken) {
+        return service.calculateActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
     }
 
     // TODO: Add endpoint for admin to disable an activity
