@@ -29,7 +29,7 @@ public class Event extends EventBase {
 
     private List<String> participants; // iNaturalist users
 
-    // TODO: Add support for groups
+    // TODO: Add support for groups of participants
     // private List<String> groups; // WildPlaces groups containing iNaturalist users
 
 }

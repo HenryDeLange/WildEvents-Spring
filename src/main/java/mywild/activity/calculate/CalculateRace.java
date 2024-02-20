@@ -39,6 +39,7 @@ public class CalculateRace extends CalculateAbstract {
 
     @Override
     protected void doValidation(ActivityEntity activity) {
+        // TODO: Change this to also use steps (instead of splitting the taxon_id into an array)
         if (activity.getSteps().size() != 1)
             throw new BadRequestException("The Race Activity must have 1 step (only).");
         Set<String> queryParamKeys = activity.getSteps().get(0).getCriteria().keySet();
