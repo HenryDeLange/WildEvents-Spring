@@ -59,7 +59,7 @@ public class SecurityConfig {
                             .requestMatchers("/").permitAll()
                             .requestMatchers("/index.html").permitAll()
                             // Actuator
-                            .requestMatchers("/actuator/**").permitAll()
+                            // .requestMatchers("/actuator/**").permitAll()
                             // Swagger UI
                             .requestMatchers("/swagger-ui.html").permitAll()
                             .requestMatchers("/swagger-ui/**").permitAll()
