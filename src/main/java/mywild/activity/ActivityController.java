@@ -58,6 +58,16 @@ public class ActivityController {
         return service.calculateActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
     }
 
-    // TODO: Add endpoint for admin to disable an activity
+    @Operation(summary = "Enable an Activity.")
+    @PutMapping("/activities/{activityId}/enable")
+    public void enableActivity(@PathVariable String activityId, JwtAuthenticationToken jwtToken) {
+        service.enableActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
+    }
+
+    @Operation(summary = "Disable the Activity.")
+    @PutMapping("/activities/{activityId}/disable")
+    public Activity disableActivity(@PathVariable String activityId, JwtAuthenticationToken jwtToken) {
+        return service.disableActivity(Utils.getUserIdFromJwt(jwtToken), activityId);
+    }
 
 }

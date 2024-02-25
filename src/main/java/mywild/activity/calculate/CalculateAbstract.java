@@ -2,6 +2,7 @@ package mywild.activity.calculate;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +51,7 @@ public abstract class CalculateAbstract {
             // Validate Activity
             validate(activity);
             // Process each Criteria
+            List<String> participants = Arrays.asList(event.getParticipants().replace("#", "").split(","));
             processing:
             for (ActivityStep step : activity.getSteps()) {
                 // Fetch Data
@@ -75,7 +77,7 @@ public abstract class CalculateAbstract {
                 log.debug("Done fetching all observations from iNat");
                 // Calculate Results
                 log.debug("Preparing to calculate {} observations...", observations.size());
-                activity.getResults().add(doCalculation(event.getParticipants(), step, observations));
+                activity.getResults().add(doCalculation(participants, step, observations));
                 activity.setCalculated(ZonedDateTime.now());
                 activity = saveStatus(activity, ActivityStatus.CALCULATED);
                 log.debug("Calculated");
@@ -120,7 +122,7 @@ public abstract class CalculateAbstract {
         try {
             return restClient
                 .get()
-                .uri(configureBaseQueryParams(builder, event, page).toUriString())
+                .uri(configureBaseQueryParams(builder, event, page))
                 .retrieve()
                 .body(Observations.class); // To see the full JSON use: body(String.class)
         }
@@ -130,15 +132,18 @@ public abstract class CalculateAbstract {
         }
     }
 
-    private UriComponentsBuilder configureBaseQueryParams(UriComponentsBuilder builder, EventEntity event, int page) {
-        return builder
+    private String configureBaseQueryParams(UriComponentsBuilder builder, EventEntity event, int page) {
+        String inatUri = builder
             .queryParam("page", page)
             .queryParam("per_page", perPage)
-            .queryParam("order", "desc")
+            .queryParam("order", "asc")
             .queryParam("order_by", "observed_on")
             .queryParam("d1", event.getStart())
             .queryParam("d2", event.getStop())
-            .queryParam("user_id", event.getParticipants().toString().replace("[", "").replace("]", "").replace(" ", ""));
+            .queryParam("user_id", event.getParticipants().replace("#", ""))
+            .toUriString();
+        log.info("Fetching results from iNaturalist using URL: {}", inatUri);
+        return inatUri;
     }
 
     protected abstract void doValidation(ActivityEntity activity);

@@ -1,6 +1,9 @@
 package mywild.event;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +47,7 @@ public class EventService {
     public @Valid Paged<Event> findEvents(@NotNull String userId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
         Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartDescNameAsc(
-            EventVisibilityType.PUBLIC, validUser.getUsername(), validUser.getInaturalist(),
+            EventVisibilityType.PUBLIC, EventUtils.getValidName(validUser.getUsername()), EventUtils.getValidName(validUser.getInaturalist()),
             CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
         return new Paged<>(
             page, pageSize, entities.getTotalElements(),
@@ -60,8 +63,8 @@ public class EventService {
             throw new NotFoundException("Event not found!");
         EventEntity entity = foundEntity.get();
         if (entity.getVisibility() == EventVisibilityType.PRIVATE
-                && !entity.getAdmins().contains(validUser.getUsername())
-                && !entity.getParticipants().contains(validUser.getInaturalist()))
+                && !EventUtils.containsName(entity.getAdmins(), validUser.getUsername())
+                && !EventUtils.containsName(entity.getParticipants(), validUser.getInaturalist()))
             throw new ForbiddenException("Event not accessible by this User!");
         return EventMapper.INSTANCE.entityToDto(entity);
     }
@@ -83,7 +86,7 @@ public class EventService {
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to update!");
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername()))
             throw new ForbiddenException("Event cannot be updated by this User!");
         makeSureEventIsNotClosed(entity);
         return EventMapper.INSTANCE.entityToDto(
@@ -95,7 +98,7 @@ public class EventService {
         Optional<EventEntity> foundEntity = repo.findById(id);
         if (foundEntity.isPresent()) {
             EventEntity entity = foundEntity.get();
-            if (!entity.getAdmins().contains(validUser.getUsername()))
+            if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername()))
                 throw new ForbiddenException("Event cannot be deleted by this User!");
             repo.delete(entity);
         }
@@ -110,7 +113,7 @@ public class EventService {
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to calculate!");
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername()))
             throw new ForbiddenException("Event cannot be calculated by this User!");
         makeSureEventIsNotClosed(entity);
         // Calculate all associated activities
@@ -124,14 +127,15 @@ public class EventService {
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to add an Admin to!");
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername()))
             throw new ForbiddenException("This User cannot add an Admin to this Event!");
+        String admin = adminUsername.toLowerCase();
         makeSureEventIsNotClosed(entity);
-        Optional<UserEntity> adminUser = userRepo.findByUsername(adminUsername);
+        Optional<UserEntity> adminUser = userRepo.findByUsername(admin);
         if (!adminUser.isPresent())
             throw new BadRequestException("Cannot find the Admin User to add to this Event!");
-        if (!entity.getAdmins().contains(adminUsername))
-            entity.getAdmins().add(adminUsername);
+        if (!EventUtils.containsName(entity.getAdmins(), admin))
+            entity.setAdmins(addName(entity.getAdmins(), admin));
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }
@@ -142,11 +146,12 @@ public class EventService {
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to remove an Admin from!");
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername()))
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername()))
             throw new ForbiddenException("This User cannot remove an Admin from this Event!");
+        String admin = adminUsername.toLowerCase();
         makeSureEventIsNotClosed(entity);
-        if (entity.getAdmins().contains(adminUsername))
-            entity.getAdmins().remove(adminUsername);
+        if (EventUtils.containsName(entity.getAdmins(), admin))
+            entity.setAdmins(removeName(entity.getAdmins(), admin));
         if (entity.getAdmins().isEmpty())
             throw new BadRequestException("The event must have at least one Admin!");
         return EventMapper.INSTANCE.entityToDto(
@@ -158,17 +163,17 @@ public class EventService {
         Optional<EventEntity> foundEntity = repo.findById(id);
         if (!foundEntity.isPresent())
             throw new NotFoundException("Could not find the Event to add a Participant to!");
-        String participantToAdd = iNatName.toLowerCase();
+        String participant = iNatName.toLowerCase();
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername())) {
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername())) {
             if (entity.getVisibility() == EventVisibilityType.PRIVATE)
                 throw new ForbiddenException("Only admins can add participants to this Event!");
-            if (!participantToAdd.equals(userINatName))
+            if (!participant.equals(userINatName))
                 throw new ForbiddenException("This User cannot add the Participant to this Event!");
         }
         makeSureEventIsNotClosed(entity);
-        if (!entity.getParticipants().contains(participantToAdd))
-            entity.getParticipants().add(participantToAdd);
+        if (!EventUtils.containsName(entity.getParticipants(), participant))
+            entity.setParticipants(addName(entity.getParticipants(), participant));
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }
@@ -180,16 +185,16 @@ public class EventService {
             throw new NotFoundException("Could not find the Event to remove a Participant from!");
         String participantToRemove = iNatName.toLowerCase();
         EventEntity entity = foundEntity.get();
-        if (!entity.getAdmins().contains(validUser.getUsername())) {
+        if (!EventUtils.containsName(entity.getAdmins(), validUser.getUsername())) {
             if (entity.getVisibility() == EventVisibilityType.PRIVATE)
                 throw new ForbiddenException("Only admins can add participants to this Event!");
             if (!participantToRemove.equals(userINatName))
                 throw new ForbiddenException("This User cannot add the Participant to this Event!");
         }
-        makeSureEventIsNotClosed(entity);
         String participant = iNatName.toLowerCase();
-        if (entity.getParticipants().contains(participant))
-            entity.getParticipants().remove(participant);
+        makeSureEventIsNotClosed(entity);
+        if (EventUtils.containsName(entity.getParticipants(), participant))
+            entity.setParticipants(removeName(entity.getParticipants(), participant));
         return EventMapper.INSTANCE.entityToDto(
             repo.save(entity));
     }
@@ -204,6 +209,19 @@ public class EventService {
         if (!userEntity.isPresent())
             throw new ForbiddenException("Incorrect User ID!");
         return userEntity.get();
+    }
+
+    private String removeName(String stringList, String name) {
+        List<String> list = new ArrayList<>(Arrays.asList(stringList.split(",")));
+        list.remove(EventUtils.getValidName(name));
+        return String.join(",", list);
+    }
+
+    private String addName(String stringList, String name) {
+        List<String> list = new ArrayList<>(Arrays.asList(stringList.split(",")));
+        list.add(EventUtils.getValidName(name));
+        Collections.sort(list);
+        return String.join(",", list);
     }
 
 }

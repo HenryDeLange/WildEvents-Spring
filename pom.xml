@@ -7,19 +7,19 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>mywild</groupId>
     <artifactId>wildevents</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
 
     <name>WildEvents</name>
     <description>WildEvents Spring Boot Project</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
     </properties>
 
     <dependencyManagement>

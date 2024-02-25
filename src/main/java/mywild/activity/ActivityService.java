@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +17,7 @@ import mywild.core.error.ForbiddenException;
 import mywild.core.error.NotFoundException;
 import mywild.event.EventEntity;
 import mywild.event.EventRepository;
+import mywild.event.EventUtils;
 import mywild.event.EventVisibilityType;
 import mywild.user.UserEntity;
 import mywild.user.UserRepository;
@@ -109,8 +109,28 @@ public class ActivityService {
         return ActivityMapper.INSTANCE.entityToDto(entity);
     }
 
+    public @Valid Activity enableActivity(@NotNull String userId, @NotNull String id) {
+        return setDisabledReasonForActivity(userId, id, null);
+    }
+
+    public @Valid Activity disableActivity(@NotNull String userId, @NotNull String id) {
+        return setDisabledReasonForActivity(userId, id, ActivityDisableReason.ADMIN_DISABLED);
+    }
+
+    private Activity setDisabledReasonForActivity(@NotNull String userId, @NotNull String id, ActivityDisableReason reason) {
+        UserEntity validUser = getValidUser(userId);
+        Optional<ActivityEntity> foundEntity = repo.findById(id);
+        if (!foundEntity.isPresent())
+            throw new NotFoundException("Could not find the Activity to update!");
+        ActivityEntity entity = foundEntity.get();
+        EventEntity validEvent = getValidEvent(validUser, entity.getEventId(), false);
+        checkThatEventCanBeModified(validUser, validEvent);
+        entity.setDisableReason(reason);
+        return ActivityMapper.INSTANCE.entityToDto(repo.save(entity));
+    }
+
     private void checkThatEventCanBeModified(UserEntity user, EventEntity event) {
-        if (!event.getAdmins().contains(user.getUsername()))
+        if (!EventUtils.containsName(event.getAdmins(), user.getUsername()))
             throw new ForbiddenException("Activity cannot be modified by this User!");
         if (event.getClose().isBefore(ZonedDateTime.now()))
             throw new BadRequestException("This Event is already finished, it cannot be modified anymore!");
@@ -122,7 +142,7 @@ public class ActivityService {
             throw new NotFoundException("The Event associated with this Activity cannot be found!");
         EventEntity entity = foundEntity.get();
         if (entity.getVisibility() == EventVisibilityType.PRIVATE && !entity.getAdmins().contains(user.getUsername())
-                && !(canBeParticipant && entity.getParticipants().contains(user.getInaturalist())))
+                && !(canBeParticipant && EventUtils.containsName(entity.getParticipants(), user.getInaturalist())))
             throw new ForbiddenException("Event not accessible by this User!");
         return entity;
     }

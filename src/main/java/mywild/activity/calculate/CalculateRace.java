@@ -39,9 +39,6 @@ public class CalculateRace extends CalculateAbstract {
 
     @Override
     protected void doValidation(ActivityEntity activity) {
-        // TODO: Change this to also use steps (instead of splitting the taxon_id into an array)
-        if (activity.getSteps().size() != 1)
-            throw new BadRequestException("The Race Activity must have 1 step (only).");
         Set<String> queryParamKeys = activity.getSteps().get(0).getCriteria().keySet();
         if (!queryParamKeys.contains("taxon_id"))
             throw new BadRequestException("The Race Activity requires the 'taxon_id' to be specified.");
@@ -51,39 +48,29 @@ public class CalculateRace extends CalculateAbstract {
 
     @Override
     protected ActivityStepResult doCalculation(List<String> participants, ActivityStep step, List<Observation> observations) {
-        List<String> activityTaxa = new ArrayList<>(Arrays.asList(step.getCriteria().get("taxon_id").split(",")));
-        Map<String, List<Observation>> qualifiedObservations = new HashMap<>(activityTaxa.size());
+        List<Observation> scoringObservations = new ArrayList<>(POINT_POSITIONS);
+        Set<String> scoringParticipants = new HashSet<>(POINT_POSITIONS);
         for (Observation observation : observations) {
-            for (String ancestor : observation.taxon().min_species_ancestry().split(",")) {
-                if (activityTaxa.contains(ancestor)) {
-                    List<Observation> tempObservations = qualifiedObservations.computeIfAbsent(ancestor, key -> new ArrayList<>(POINT_POSITIONS));
-                    Set<String> users = new HashSet<>(tempObservations.size());
-                    for (Observation tempObservation : tempObservations) {
-                        users.add(tempObservation.user().login().toLowerCase());
-                    }
-                    if (!users.contains(observation.user().login().toLowerCase())) {
-                        tempObservations.add(observation);
-                    }
-                    if (tempObservations.size() >= POINT_POSITIONS)
-                        activityTaxa.remove(ancestor);
-                }
-                if (activityTaxa.isEmpty())
-                    break;
+            String obsParticipant = observation.user().login().toLowerCase();
+            if (!scoringParticipants.contains(obsParticipant)) {
+                scoringParticipants.add(obsParticipant);
+                scoringObservations.add(observation);
             }
+            if (scoringObservations.size() >= POINT_POSITIONS)
+                break;
         }
         Map<String, ActivityCalculation> calculationResults = new HashMap<>(participants.size());
         for (String participant : participants) {
             calculationResults.put(participant, new ActivityCalculation(0, null));
         }
-        for (List<Observation> qualifiedObs : qualifiedObservations.values()) {
-            for (int i = 0; i < qualifiedObs.size(); i++) {
-                Observation observation = qualifiedObs.get(i);
-                ActivityCalculation calculation = calculationResults.get(observation.user().login());
-                if (calculation.getObservations() == null)
-                    calculation.setObservations(new ArrayList<>(POINT_POSITIONS));
-                calculation.setScore(calculation.getScore() + (POINT_POSITIONS - i));
-                calculation.getObservations().add(observation.id());
-            }
+        for (int i = 0; i < scoringObservations.size(); i++) {
+            Observation observation = scoringObservations.get(i);
+            String obsParticipant = observation.user().login().toLowerCase();
+            ActivityCalculation calculation = calculationResults.get(obsParticipant);
+            calculation.setScore(calculation.getScore() + (POINT_POSITIONS - i));
+            if (calculation.getObservations() == null)
+                calculation.setObservations(new ArrayList<>(POINT_POSITIONS));
+            calculation.getObservations().add(observation.id());
         }
         return new ActivityStepResult(step.getId(), calculationResults);
     }

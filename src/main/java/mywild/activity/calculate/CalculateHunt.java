@@ -58,7 +58,7 @@ public class CalculateHunt extends CalculateAbstract {
         Map<String, ActivityCalculation> calculationResults = new HashMap<>(participants.size());
         for (Observation observation : observations) {
             String obsParticipant = observation.user().login().toLowerCase();
-            // TODO: Maybe only gain half the points if the previous steps weren't completed?
+            // TODO: Only gain points if the previous steps were completed
             calculationResults.putIfAbsent(obsParticipant, new ActivityCalculation(1, List.of(observation.id())));
         }
         if (calculationResults.size() < participants.size()) {

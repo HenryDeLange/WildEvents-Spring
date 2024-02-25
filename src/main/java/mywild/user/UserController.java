@@ -37,6 +37,6 @@ public class UserController {
         return service.refresh(Utils.getUserIdFromJwt(jwtToken));
     }
 
-    // TODO: logout - for this I'll need to keep track of active tokens and revoke ones that are logged out
+    // TODO: logout (keep track of active tokens and revoke ones that are logged out)
 
 }

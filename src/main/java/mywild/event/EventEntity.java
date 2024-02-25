@@ -57,11 +57,10 @@ public class EventEntity extends BaseEntity {
     @NotNull
     private EventVisibilityType visibility;
 
-    @NotNull
-    @Size(min = 1)
-    private List<String> admins;
+    @NotBlank
+    private String admins;
 
-    private List<String> participants;
+    private String participants;
 
     // private List<String> groups;
 

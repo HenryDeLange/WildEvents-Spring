@@ -22,7 +22,7 @@ public class UserService {
     private TokenService tokenService;
 
     public Tokens register(@Valid User user) {
-        user.setUsername(user.getUsername().trim());
+        user.setUsername(user.getUsername().trim().toLowerCase());
         user.setInaturalist(user.getInaturalist().trim().toLowerCase());
         UserEntity userEntity = repo.save(UserMapper.INSTANCE.dtoToEntity(user));
         return new Tokens(
@@ -35,7 +35,8 @@ public class UserService {
     // TODO: keep track of login attempts and restrict it to X per hour/day, to prevent brute force attacks
     // TODO: add rate-limit on requests
     public Tokens login(@Valid UserLogin login) {
-        Optional<UserEntity> foundEntity = repo.findByUsernameAndPassword(login.getUsername(), login.getPassword());
+        Optional<UserEntity> foundEntity = repo.findByUsernameAndPassword(
+            login.getUsername().toLowerCase(), login.getPassword());
         if (!foundEntity.isPresent())
             throw new ForbiddenException("Incorrect User credentials!");
         UserEntity entity = foundEntity.get();
