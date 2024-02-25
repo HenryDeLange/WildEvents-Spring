@@ -1,9 +1,10 @@
 name: Build Spring Docker Image
 
-on: workflow_dispatch
+on:
+    workflow_dispatch:
 
 jobs:
-    build-image:
+    build-docker-image:
         runs-on: ubuntu-latest
 
         steps:

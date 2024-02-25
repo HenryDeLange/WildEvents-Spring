@@ -1,5 +1,5 @@
 # WildEvents-Spring
-![Dynamic XML Badge](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FHenryDeLange%2FWildEvents-Spring%2Fmain%2Fpom.xml&query=%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'version'%5D&label=version)
+![App Version](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FHenryDeLange%2FWildEvents-Spring%2Fmain%2Fpom.xml&query=%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'version'%5D&label=version)
 ![GitHub License](https://img.shields.io/github/license/HenryDeLange/WildEvents-Spring)
 
 The Spring (Java) backend for WildEvents.
@@ -7,11 +7,11 @@ The Spring (Java) backend for WildEvents.
 ## Development
 
 ### Build
-![GitHub top language](https://img.shields.io/github/languages/top/HenryDeLange/WildEvents-Spring)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/HenryDeLange/WildEvents-Spring/spring-source-build.yml?label=maven%20build)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/HenryDeLange/WildEvents-Spring/spring-docker-build.yml?label=docker%20build)
+![Top Language](https://img.shields.io/github/languages/top/HenryDeLange/WildEvents-Spring)
+![Maven Build](https://img.shields.io/github/actions/workflow/status/HenryDeLange/WildEvents-Spring/spring-source-build.yml?label=maven%20build)
+![Docker Deploy](https://img.shields.io/github/actions/workflow/status/HenryDeLange/WildEvents-Spring/spring-docker-build.yml?label=docker%20deploy)
 
-This project uses `Java 21` and `Maven` to build.
+This project written in `Java 21` using `Spring Boot`, and `Maven` to build.
 
 ### Setup
 
