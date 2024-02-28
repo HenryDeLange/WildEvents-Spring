@@ -1,7 +1,6 @@
 package mywild.activity;
 
 import java.util.List;
-import java.util.Map;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

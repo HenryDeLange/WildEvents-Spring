@@ -1,7 +1,6 @@
 package mywild.activity.calculate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +18,7 @@ import mywild.core.error.BadRequestException;
  * Calculate the results of an Activity that is a "race" to observe a taxon before other users.
  * 
  * Recommended iNat Query Params:
- *   - (REQUIRED) taxon_id
+ *   - (REQUIRED) taxon_name
  *   - place_id
  *   - project_id
  *   - captive
@@ -27,7 +26,7 @@ import mywild.core.error.BadRequestException;
  *   - threatened
  *   - verifiable
  *   - quality_grade
- *   - without_taxon_id
+ *   - without_taxon_name
  * 
  * Unsupported iNat Query Params:
  *   - taxon_name
@@ -40,10 +39,10 @@ public class CalculateRace extends CalculateAbstract {
     @Override
     protected void doValidation(ActivityEntity activity) {
         Set<String> queryParamKeys = activity.getSteps().get(0).getCriteria().keySet();
-        if (!queryParamKeys.contains("taxon_id"))
-            throw new BadRequestException("The Race Activity requires the 'taxon_id' to be specified.");
-        if (queryParamKeys.contains("taxon_name"))
-            throw new BadRequestException("The Race Activity does not support the use of the 'taxon_name', use the 'taxon_id' instead.");
+        if (!queryParamKeys.contains("taxon_name"))
+            throw new BadRequestException("The Race Activity requires the 'taxon_name' to be specified.");
+        if (queryParamKeys.contains("taxon_id"))
+            throw new BadRequestException("The Race Activity does not support the use of the 'taxon_id', use the 'taxon_name' instead.");
     }
 
     @Override

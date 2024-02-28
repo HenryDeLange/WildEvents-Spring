@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import mywild.activity.ActivityCalculation;
@@ -24,13 +23,13 @@ import mywild.core.error.BadRequestException;
  *   - (REQUIRED) nelng
  *   - (REQUIRED) swlat
  *   - (REQUIRED) swlng
- *   - taxon_id
+ *   - taxon_name
  *   - captive
  *   - introduced
  *   - threatened
  *   - verifiable
  *   - quality_grade
- *   - without_taxon_id
+ *   - without_taxon_name
  * 
  * Unsupported iNat Query Params:
  *   - lat

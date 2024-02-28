@@ -16,7 +16,7 @@ import mywild.core.error.BadRequestException;
  * Calculate the results of an Activity that is a "treasure hunt" by solving steps leading towards the final treasure.
  * 
  * Recommended iNat Query Params:
- *   - (REQUIRED) taxon_id
+ *   - (REQUIRED) taxon_name
  *   - (REQUIRED) lat
  *   - (REQUIRED) lng
  *   - (REQUIRED) radius
@@ -25,7 +25,7 @@ import mywild.core.error.BadRequestException;
  *   - threatened
  *   - verifiable
  *   - quality_grade
- *   - without_taxon_id
+ *   - without_taxon_name
  * 
  * Unsupported iNat Query Params:
  *   - taxon_name
@@ -41,12 +41,12 @@ public class CalculateHunt extends CalculateAbstract {
     protected void doValidation(ActivityEntity activity) {
         for (ActivityStep step : activity.getSteps()) {
             Set<String> queryParamKeys = step.getCriteria().keySet();
-            if (!queryParamKeys.contains("taxon_id"))
-                throw new BadRequestException("The Hunt Activity requires the 'taxon_id' to be specified.");
+            if (!queryParamKeys.contains("taxon_name"))
+                throw new BadRequestException("The Hunt Activity requires the 'taxon_name' to be specified.");
             if (!queryParamKeys.contains("lat") || !queryParamKeys.contains("lng") || !queryParamKeys.contains("radius"))
                 throw new BadRequestException("The Hunt Activity requires the 'lat', 'lng' and 'radius' to be specified.");
-            if (queryParamKeys.contains("taxon_name"))
-                throw new BadRequestException("The Hunt Activity does not support the use of the 'taxon_name', use the 'taxon_id' instead.");
+            if (queryParamKeys.contains("taxon_id"))
+                throw new BadRequestException("The Hunt Activity does not support the use of the 'taxon_id', use the 'taxon_name' instead.");
             if (queryParamKeys.contains("nelat") || queryParamKeys.contains("nelng")
                     || queryParamKeys.contains("swlat") || queryParamKeys.contains("swlng"))
                 throw new BadRequestException("The Hunt Activity does not support the use of 'nelat', 'nelng', 'swlat' or 'swlng', use 'lat', 'lng' and 'radius' instead.");

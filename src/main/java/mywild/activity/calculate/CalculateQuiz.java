@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import mywild.activity.ActivityCalculation;
@@ -18,12 +17,12 @@ import mywild.core.error.BadRequestException;
  * Calculate the results of an Activity that is a "quiz" by answering steps with the correct observation.
  * 
  * Recommended iNat Query Params:
- *   - (REQUIRED) taxon_id
+ *   - (REQUIRED) taxon_name
  *   - captive
  *   - introduced
  *   - verifiable
  *   - quality_grade
- *   - without_taxon_id
+ *   - without_taxon_name
  * 
  * Unsupported iNat Query Params:
  *   - taxon_name
@@ -38,10 +37,10 @@ public class CalculateQuiz extends CalculateAbstract {
     protected void doValidation(ActivityEntity activity) {
         for (ActivityStep step : activity.getSteps()) {
             Set<String> queryParamKeys = step.getCriteria().keySet();
-            if (!queryParamKeys.contains("taxon_id"))
-                throw new BadRequestException("The Quiz Activity requires the 'taxon_id' to be specified.");
-            if (queryParamKeys.contains("taxon_name"))
-                throw new BadRequestException("The Quiz Activity does not support the use of the 'taxon_name', use the 'taxon_id' instead.");
+            if (!queryParamKeys.contains("taxon_name"))
+                throw new BadRequestException("The Quiz Activity requires the 'taxon_name' to be specified.");
+            if (queryParamKeys.contains("taxon_id"))
+                throw new BadRequestException("The Quiz Activity does not support the use of the 'taxon_id', use the 'taxon_name' instead.");
         }
     }
 

@@ -13,7 +13,7 @@
 
     <groupId>mywild</groupId>
     <artifactId>wildevents</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <name>WildEvents</name>
     <description>WildEvents Spring Boot Project</description>

@@ -1,7 +1,6 @@
 package mywild.event;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import com.azure.cosmos.models.CompositePathSortOrder;
 import com.azure.spring.data.cosmos.core.mapping.CompositeIndex;
 import com.azure.spring.data.cosmos.core.mapping.CompositeIndexPath;
@@ -12,7 +11,6 @@ import com.azure.spring.data.cosmos.core.mapping.CosmosUniqueKeyPolicy;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +31,7 @@ import mywild.core.data.BaseEntity;
 })
 @CosmosIndexingPolicy(compositeIndexes = {
     @CompositeIndex(paths = {
-        @CompositeIndexPath(path = "/start", order = CompositePathSortOrder.DESCENDING),
+        @CompositeIndexPath(path = "/start", order = CompositePathSortOrder.ASCENDING),
         @CompositeIndexPath(path = "/name", order = CompositePathSortOrder.ASCENDING)
     })
 }, overwritePolicy = true)

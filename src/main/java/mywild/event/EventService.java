@@ -46,7 +46,7 @@ public class EventService {
 
     public @Valid Paged<Event> findEvents(@NotNull String userId, int page, String requestContinuation) {
         UserEntity validUser = getValidUser(userId);
-        Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartDescNameAsc(
+        Page<EventEntity> entities = repo.findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartAscNameAsc(
             EventVisibilityType.PUBLIC, EventUtils.getValidName(validUser.getUsername()), EventUtils.getValidName(validUser.getInaturalist()),
             CosmosPageRequest.of(page, pageSize, requestContinuation, Sort.unsorted()));
         return new Paged<>(

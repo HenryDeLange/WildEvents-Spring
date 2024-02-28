@@ -9,7 +9,7 @@ import com.azure.spring.data.cosmos.repository.CosmosRepository;
 @Repository
 public interface EventRepository extends CosmosRepository<EventEntity, String> {
 
-    Page<EventEntity> findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartDescNameAsc(
+    Page<EventEntity> findAllByVisibilityOrAdminsContainsIgnoreCaseOrParticipantsContainsIgnoreCaseOrderByStartAscNameAsc(
         EventVisibilityType visibility, String adminId, String iNatId, Pageable pageable);
 
 }
