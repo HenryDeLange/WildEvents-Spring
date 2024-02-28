@@ -1,6 +1,6 @@
 package mywild.event;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,13 +24,13 @@ public class EventBase {
     private String description;
 
     @NotNull
-    private ZonedDateTime start; // iNaturalist observations start counting towards Achievements from this date
+    private LocalDate start; // iNaturalist observations start counting towards Achievements from this date
 
     @NotNull
-    private ZonedDateTime stop; // iNaturalist observations stop counting towards Achievements by this date
+    private LocalDate stop; // iNaturalist observations stop counting towards Achievements by this date
 
     @NotNull
-    private ZonedDateTime close; // Achievements can be (re)calculate up to this date (to cater for late identifications)
+    private LocalDate close; // Achievements can be (re)calculate up to this date (to cater for late identifications)
 
     @NotNull
     private EventVisibilityType visibility;

@@ -1,6 +1,6 @@
 package mywild.event;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import com.azure.cosmos.models.CompositePathSortOrder;
 import com.azure.spring.data.cosmos.core.mapping.CompositeIndex;
 import com.azure.spring.data.cosmos.core.mapping.CompositeIndexPath;
@@ -43,13 +43,13 @@ public class EventEntity extends BaseEntity {
     private String description;
 
     @NotNull
-    private ZonedDateTime start;
+    private LocalDate start;
 
     @NotNull
-    private ZonedDateTime stop;
+    private LocalDate stop;
 
     @NotNull
-    private ZonedDateTime close;
+    private LocalDate close;
 
     @PartitionKey
     @NotNull

@@ -1,6 +1,6 @@
 package mywild.event;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -200,7 +200,7 @@ public class EventService {
     }
 
     private void makeSureEventIsNotClosed(EventEntity entity) {
-        if (entity.getClose().isBefore(ZonedDateTime.now()))
+        if (entity.getClose().isBefore(LocalDate.now()))
             throw new BadRequestException("This Event is already finished, it cannot be modified anymore!");
     }
 

@@ -1,6 +1,6 @@
 package mywild.activity;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -132,7 +132,7 @@ public class ActivityService {
     private void checkThatEventCanBeModified(UserEntity user, EventEntity event) {
         if (!EventUtils.containsName(event.getAdmins(), user.getUsername()))
             throw new ForbiddenException("Activity cannot be modified by this User!");
-        if (event.getClose().isBefore(ZonedDateTime.now()))
+        if (event.getClose().isBefore(LocalDate.now()))
             throw new BadRequestException("This Event is already finished, it cannot be modified anymore!");
     }
 
