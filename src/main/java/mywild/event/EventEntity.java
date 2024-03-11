@@ -51,7 +51,6 @@ public class EventEntity extends BaseEntity {
     @NotNull
     private LocalDate close;
 
-    @PartitionKey
     @NotNull
     private EventVisibilityType visibility;
 

@@ -8,12 +8,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.3</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath />
     </parent>
 
     <groupId>mywild</groupId>
     <artifactId>wildevents</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 
     <name>WildEvents</name>
     <description>WildEvents Spring Boot Project</description>
@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>com.azure.spring</groupId>
                 <artifactId>spring-cloud-azure-dependencies</artifactId>
-                <version>5.9.1</version>
+                <version>5.10.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
